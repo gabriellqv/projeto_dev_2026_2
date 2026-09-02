@@ -76,7 +76,7 @@ export class AgendamentoService {
     // Valida transicoes permitidas entre status.
     this.validarTransicao(agendamento.status, input.status);
 
-    return this.agendamentoRepository.atualizarStatus(id, input.status);
+    return this.agendamentoRepository.atualizarStatus(id, input.status, agendamento.status);
   }
 
   private validarTransicao(atual: StatusAgendamento, novo: StatusAgendamento): void {

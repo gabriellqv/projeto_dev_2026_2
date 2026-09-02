@@ -67,10 +67,22 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     };
   }
 
-  async atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento> {
+  async atualizarStatus(
+    id: string,
+    status: StatusAgendamento,
+    statusAnterior: StatusAgendamento,
+  ): Promise<Agendamento> {
     return prisma.agendamento.update({
       where: { id },
-      data: { status },
+      data: {
+        status,
+        historico: {
+          create: {
+            statusAnterior,
+            statusNovo: status,
+          },
+        },
+      },
       include: { procedimento: true },
     });
   }

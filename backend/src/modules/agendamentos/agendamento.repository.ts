@@ -1,7 +1,7 @@
-import type { Agendamento, StatusAgendamento } from '@prisma/client';
+import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/client';
 
 // Reexporta os tipos para facilitar o uso em outros modulos.
-export type { Agendamento, StatusAgendamento };
+export type { Agendamento, HistoricoStatus, StatusAgendamento };
 
 // Interface do repositorio de agendamentos.
 // Separa a logica de persistencia da logica de negocio.
@@ -17,7 +17,7 @@ export interface AgendamentoRepository {
   buscarPorId(id: string): Promise<Agendamento | null>;
   existeAgendamento(email: string, data: Date, horario: string): Promise<boolean>;
   criar(dados: AgendamentoData): Promise<Agendamento>;
-  atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento>;
+  atualizarStatus(id: string, status: StatusAgendamento, statusAnterior: StatusAgendamento): Promise<Agendamento>;
 }
 
 // Tipo compartilhado para criacao sem campos gerenciados pelo banco.
