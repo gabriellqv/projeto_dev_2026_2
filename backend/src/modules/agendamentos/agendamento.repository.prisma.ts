@@ -22,7 +22,7 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
 
     return prisma.agendamento.findMany({
       where: this.montarWhere(params.status, params.busca),
-      orderBy: { data: 'asc' },
+      orderBy: [{ data: 'asc' }, { horario: 'asc' }],
       skip,
       take: params.limite,
       include: { procedimento: true },
