@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feat/**'
+      - 'fix/**'
+      - 'docs/**'
+      - 'chore/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  quality:
+    name: Qualidade e Testes
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configura Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Instala dependências
+        run: npm ci
+
+      - name: Verifica formatação
+        run: npm run format:check
+
+      - name: Roda lint
+        run: npm run lint
+
+      - name: Verifica tipos
+        run: npm run type-check
+
+      - name: Roda testes
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Auditoria de dependências
+        run: npm audit --audit-level moderate
