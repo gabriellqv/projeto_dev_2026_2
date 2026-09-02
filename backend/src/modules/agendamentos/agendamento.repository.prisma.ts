@@ -2,7 +2,7 @@ import type { Agendamento, Prisma, StatusAgendamento } from '@prisma/client';
 
 import { prisma } from '../../shared/database/prisma.js';
 
-import type { AgendamentoRepository } from './agendamento.repository.js';
+import type { AgendamentoData, AgendamentoRepository } from './agendamento.repository.js';
 
 // Implementacao do repositorio de agendamentos com Prisma.
 // Filtros de busca e paginacao ficam centralizados aqui.
@@ -38,11 +38,21 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     });
   }
 
-  async criar(dados: Prisma.AgendamentoUncheckedCreateInput): Promise<Agendamento> {
+  async criar(dados: AgendamentoData): Promise<Agendamento> {
     return prisma.agendamento.create({
-      data: dados,
+      data: this.normalizarCamposOpcionais(dados),
       include: { procedimento: true },
     });
+  }
+
+  private normalizarCamposOpcionais(
+    dados: AgendamentoData,
+  ): Prisma.AgendamentoUncheckedCreateInput {
+    return {
+      ...dados,
+      telefone: dados.telefone ?? null,
+      observacao: dados.observacao ?? null,
+    };
   }
 
   async atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento> {

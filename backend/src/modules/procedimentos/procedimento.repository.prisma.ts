@@ -1,8 +1,9 @@
-import type { Procedimento, Prisma } from '@prisma/client';
+import type { Procedimento } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library.js';
 
 import { prisma } from '../../shared/database/prisma.js';
 
-import type { ProcedimentoRepository } from './procedimento.repository.js';
+import type { ProcedimentoData, ProcedimentoRepository } from './procedimento.repository.js';
 
 // Implementacao do repositorio usando Prisma ORM.
 // A instancia do Prisma vem de um unico ponto de configuracao.
@@ -21,14 +22,27 @@ export class PrismaProcedimentoRepository implements ProcedimentoRepository {
     });
   }
 
-  async criar(dados: Prisma.ProcedimentoCreateInput): Promise<Procedimento> {
-    return prisma.procedimento.create({ data: dados });
+  async criar(dados: ProcedimentoData): Promise<Procedimento> {
+    return prisma.procedimento.create({
+      data: {
+        ...dados,
+        preco: dados.preco === null ? null : new Decimal(dados.preco),
+      },
+    });
   }
 
-  async atualizar(id: string, dados: Prisma.ProcedimentoUpdateInput): Promise<Procedimento> {
+  async atualizar(id: string, dados: Partial<ProcedimentoData>): Promise<Procedimento> {
     return prisma.procedimento.update({
       where: { id },
-      data: dados,
+      data: {
+        ...dados,
+        preco:
+          dados.preco === undefined
+            ? undefined
+            : dados.preco === null
+              ? null
+              : new Decimal(dados.preco),
+      },
     });
   }
 }

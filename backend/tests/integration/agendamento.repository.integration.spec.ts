@@ -31,8 +31,10 @@ describe('AgendamentoRepository', () => {
     const agendamento = await repositorio.criar({
       nome: 'Maria Silva',
       email: 'maria@email.com',
+      telefone: null,
       data: new Date('2026-10-10'),
       horario: '14:00',
+      observacao: null,
       procedimentoId,
     });
 
@@ -46,16 +48,20 @@ describe('AgendamentoRepository', () => {
     await repositorio.criar({
       nome: 'Maria Silva',
       email: 'maria@email.com',
+      telefone: null,
       data: new Date('2026-10-10'),
       horario: '14:00',
+      observacao: null,
       procedimentoId,
     });
 
     await repositorio.criar({
       nome: 'Joao Souza',
       email: 'joao@email.com',
+      telefone: null,
       data: new Date('2026-10-11'),
       horario: '10:00',
+      observacao: null,
       procedimentoId,
     });
 
