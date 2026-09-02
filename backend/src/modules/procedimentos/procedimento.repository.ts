@@ -8,6 +8,7 @@ export type { Procedimento };
 
 export interface ProcedimentoRepository {
   listarAtivos(): Promise<Procedimento[]>;
+  listarTodos(): Promise<Procedimento[]>;
   buscarPorId(id: string): Promise<Procedimento | null>;
   criar(dados: ProcedimentoData): Promise<Procedimento>;
   atualizar(id: string, dados: Partial<ProcedimentoData>): Promise<Procedimento>;

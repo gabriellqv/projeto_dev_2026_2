@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 
 import { autenticar, exigirAdmin } from '../../../shared/middlewares/auth.middleware.js';
+import { adminLimiter } from '../../../shared/middlewares/rate-limit.middleware.js';
 import { validarParams, validarSchema } from '../../../shared/middlewares/validate.middleware.js';
 import {
   criarProcedimentoSchema,
@@ -19,9 +20,16 @@ export const procedimentoAdminRouter = Router();
 
 const paramsIdSchema = z.object({ id: z.string().uuid() });
 
-procedimentoAdminRouter.get('/', autenticar(), exigirAdmin, asyncHandler(controller.listarTodos));
+procedimentoAdminRouter.get(
+  '/',
+  adminLimiter,
+  autenticar(),
+  exigirAdmin,
+  asyncHandler(controller.listarTodos),
+);
 procedimentoAdminRouter.post(
   '/',
+  adminLimiter,
   autenticar(),
   exigirAdmin,
   validarSchema(criarProcedimentoSchema),
@@ -29,6 +37,7 @@ procedimentoAdminRouter.post(
 );
 procedimentoAdminRouter.patch(
   '/:id',
+  adminLimiter,
   autenticar(),
   exigirAdmin,
   validarParams(paramsIdSchema),
@@ -37,6 +46,7 @@ procedimentoAdminRouter.patch(
 );
 procedimentoAdminRouter.delete(
   '/:id',
+  adminLimiter,
   autenticar(),
   exigirAdmin,
   validarParams(paramsIdSchema),

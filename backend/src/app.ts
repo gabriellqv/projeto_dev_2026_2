@@ -15,8 +15,14 @@ import { errorHandler } from './shared/middlewares/error.middleware.js';
 
 export const app: Application = express();
 
+// Helmet adiciona headers de seguranca basicos.
 app.use(helmet());
-app.use(cors());
+
+// CORS limitado as origens configuradas via ambiente.
+// Padrao: frontend local em desenvolvimento.
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:5173'];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+
 app.use(express.json());
 
 // Health check simples para validar se a API esta no ar.

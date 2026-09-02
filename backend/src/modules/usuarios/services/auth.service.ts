@@ -8,6 +8,7 @@ import type { UsuarioRepository } from '../usuario.repository.js';
 
 // Service de autenticacao responsavel por validar credenciais e gerar tokens JWT.
 // Mantem a logica de login fora dos controllers e independente do framework web.
+// A configuracao JWT e injetada via factory para facilitar testes e respeitar DI.
 
 export interface AuthPayload {
   id: string;
@@ -15,8 +16,16 @@ export interface AuthPayload {
   admin: boolean;
 }
 
+export interface AuthConfig {
+  secret: string;
+  expiresIn: `${number}${'s' | 'm' | 'h' | 'd'}`;
+}
+
 export class AuthService {
-  constructor(private readonly usuarioRepository: UsuarioRepository) {}
+  constructor(
+    private readonly usuarioRepository: UsuarioRepository,
+    private readonly authConfig: AuthConfig,
+  ) {}
 
   async login(input: LoginInput): Promise<{ usuario: Usuario; token: string }> {
     const parsed = loginSchema.safeParse(input);
@@ -48,12 +57,12 @@ export class AuthService {
   }
 
   private gerarToken(payload: AuthPayload): string {
-    const secret = process.env.JWT_SECRET;
-
-    if (!secret) {
+    if (!this.authConfig.secret) {
       throw new AppError('JWT_SECRET nao configurado', 500);
     }
 
-    return jwt.sign(payload, secret, { expiresIn: '24h' });
+    return jwt.sign(payload, this.authConfig.secret, {
+      expiresIn: this.authConfig.expiresIn,
+    });
   }
 }

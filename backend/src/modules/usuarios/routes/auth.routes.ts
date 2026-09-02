@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { authLimiter } from '../../../shared/middlewares/rate-limit.middleware.js';
 import { asyncHandler } from '../../../shared/utils/async-handler.js';
 import { criarAuthController } from '../factories/auth.factory.js';
 
@@ -10,4 +11,4 @@ const authController = criarAuthController();
 
 export const authRouter = Router();
 
-authRouter.post('/login', asyncHandler(authController.login));
+authRouter.post('/login', authLimiter, asyncHandler(authController.login));

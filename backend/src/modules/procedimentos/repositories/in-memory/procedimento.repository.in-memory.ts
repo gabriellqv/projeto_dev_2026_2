@@ -13,6 +13,10 @@ export class InMemoryProcedimentoRepository implements ProcedimentoRepository {
     return this.procedimentos.filter((p) => p.ativa);
   }
 
+  async listarTodos(): Promise<Procedimento[]> {
+    return this.procedimentos;
+  }
+
   async buscarPorId(id: string): Promise<Procedimento | null> {
     return this.procedimentos.find((p) => p.id === id) ?? null;
   }
