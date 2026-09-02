@@ -56,6 +56,28 @@ export class AuthService {
     return { usuario, token };
   }
 
+  async obterUsuarioPorToken(token: string): Promise<Usuario> {
+    if (!this.authConfig.secret) {
+      throw new AppError('JWT_SECRET nao configurado', 500);
+    }
+
+    let payload: AuthPayload;
+
+    try {
+      payload = jwt.verify(token, this.authConfig.secret) as AuthPayload;
+    } catch {
+      throw new AppError('Token invalido ou expirado', 401);
+    }
+
+    const usuario = await this.usuarioRepository.buscarPorId(payload.id);
+
+    if (!usuario) {
+      throw new AppError('Usuario nao encontrado', 401);
+    }
+
+    return usuario;
+  }
+
   private gerarToken(payload: AuthPayload): string {
     if (!this.authConfig.secret) {
       throw new AppError('JWT_SECRET nao configurado', 500);
