@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 
 import { autenticar, exigirAdmin } from '../../../shared/middlewares/auth.middleware.js';
+import { adminLimiter } from '../../../shared/middlewares/rate-limit.middleware.js';
 import {
   validarParams,
   validarSchema,
@@ -25,6 +26,7 @@ const paramsIdSchema = z.object({ id: z.string().uuid() });
 
 agendamentoAdminRouter.get(
   '/',
+  adminLimiter,
   autenticar(),
   exigirAdmin,
   validarQuery(listarAgendamentosSchema),
@@ -32,6 +34,7 @@ agendamentoAdminRouter.get(
 );
 agendamentoAdminRouter.patch(
   '/:id/status',
+  adminLimiter,
   autenticar(),
   exigirAdmin,
   validarParams(paramsIdSchema),
