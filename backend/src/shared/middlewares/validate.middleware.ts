@@ -1,7 +1,6 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import { ZodSchema } from 'zod';
 
-
 // Middleware generico de validacao com Zod.
 // Recebe um schema e valida o corpo da requisicao.
 // Em caso de erro, retorna 400 com mensagens claras.

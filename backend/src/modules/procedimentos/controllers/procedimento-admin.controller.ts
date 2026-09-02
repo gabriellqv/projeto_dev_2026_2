@@ -43,7 +43,10 @@ export class ProcedimentoAdminController {
 
   atualizar: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     try {
-      const procedimento = await this.procedimentoService.atualizar(String(request.params.id), request.body);
+      const procedimento = await this.procedimentoService.atualizar(
+        String(request.params.id),
+        request.body,
+      );
 
       response.json(procedimento);
     } catch (error) {

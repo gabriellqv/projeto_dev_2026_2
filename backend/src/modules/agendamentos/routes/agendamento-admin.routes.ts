@@ -2,7 +2,11 @@ import { Router } from 'express';
 import { z } from 'zod';
 
 import { autenticar, exigirAdmin } from '../../../shared/middlewares/auth.middleware.js';
-import { validarParams, validarSchema, validarQuery } from '../../../shared/middlewares/validate.middleware.js';
+import {
+  validarParams,
+  validarSchema,
+  validarQuery,
+} from '../../../shared/middlewares/validate.middleware.js';
 import {
   atualizarStatusAgendamentoSchema,
   listarAgendamentosSchema,

@@ -32,7 +32,10 @@ export class AgendamentoAdminController {
 
   atualizarStatus: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     try {
-      const agendamento = await this.agendamentoService.atualizarStatus(String(request.params.id), request.body);
+      const agendamento = await this.agendamentoService.atualizarStatus(
+        String(request.params.id),
+        request.body,
+      );
 
       response.json(agendamento);
     } catch (error) {

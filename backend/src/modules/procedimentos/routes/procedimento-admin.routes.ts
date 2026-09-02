@@ -1,8 +1,12 @@
 import { Router } from 'express';
+import { z } from 'zod';
 
 import { autenticar, exigirAdmin } from '../../../shared/middlewares/auth.middleware.js';
 import { validarParams, validarSchema } from '../../../shared/middlewares/validate.middleware.js';
-import { criarProcedimentoSchema, atualizarProcedimentoSchema } from '../../../shared/schemas/procedimento.schema.js';
+import {
+  criarProcedimentoSchema,
+  atualizarProcedimentoSchema,
+} from '../../../shared/schemas/procedimento.schema.js';
 import { ProcedimentoAdminController } from '../controllers/procedimento-admin.controller.js';
 import { criarProcedimentoService } from '../factories/procedimento.factory.js';
 
@@ -14,15 +18,21 @@ const controller = new ProcedimentoAdminController(procedimentoService);
 
 export const procedimentoAdminRouter = Router();
 
-const paramsIdSchema = criarProcedimentoSchema;
+const paramsIdSchema = z.object({ id: z.string().uuid() });
 
 procedimentoAdminRouter.get('/', autenticar(), exigirAdmin, controller.listarTodos);
-procedimentoAdminRouter.post('/', autenticar(), exigirAdmin, validarSchema(criarProcedimentoSchema), controller.criar);
+procedimentoAdminRouter.post(
+  '/',
+  autenticar(),
+  exigirAdmin,
+  validarSchema(criarProcedimentoSchema),
+  controller.criar,
+);
 procedimentoAdminRouter.patch(
   '/:id',
   autenticar(),
   exigirAdmin,
-  validarParams(paramsIdSchema.pick({})),
+  validarParams(paramsIdSchema),
   validarSchema(atualizarProcedimentoSchema),
   controller.atualizar,
 );
@@ -30,6 +40,6 @@ procedimentoAdminRouter.delete(
   '/:id',
   autenticar(),
   exigirAdmin,
-  validarParams(paramsIdSchema.pick({})),
+  validarParams(paramsIdSchema),
   controller.desativar,
 );

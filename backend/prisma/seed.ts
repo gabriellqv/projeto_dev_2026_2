@@ -34,14 +34,17 @@ async function main(): Promise<void> {
         duracaoMinutos: 90,
       },
     ],
+    skipDuplicates: true,
   });
 
   // Senha padrao para ambiente de desenvolvimento.
   // Trocar antes de subir para producao.
   const senhaHash = bcryptjs.hashSync('admin123', 10);
 
-  await prisma.usuario.create({
-    data: {
+  await prisma.usuario.upsert({
+    where: { email: 'admin@sorrisomineiro.com.br' },
+    update: {},
+    create: {
       email: 'admin@sorrisomineiro.com.br',
       nome: 'Administrador',
       senha: senhaHash,

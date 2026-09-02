@@ -1,7 +1,6 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-
 // Payload esperado no token JWT.
 
 export interface AuthRequest extends Request {
