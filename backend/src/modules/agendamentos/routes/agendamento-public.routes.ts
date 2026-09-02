@@ -2,15 +2,18 @@ import { Router } from 'express';
 
 import { validarSchema } from '../../../shared/middlewares/validate.middleware.js';
 import { criarAgendamentoSchema } from '../../../shared/schemas/agendamento.schema.js';
-import { AgendamentoPublicController } from '../controllers/agendamento-public.controller.js';
-import { criarAgendamentoService } from '../factories/agendamento.factory.js';
+import { asyncHandler } from '../../../shared/utils/async-handler.js';
+import { criarAgendamentoPublicController } from '../factories/agendamento-public.factory.js';
 
 // Rotas publicas de agendamentos.
 // Permite que visitantes criem agendamentos sem autenticacao.
 
-const agendamentoService = criarAgendamentoService();
-const controller = new AgendamentoPublicController(agendamentoService);
+const controller = criarAgendamentoPublicController();
 
 export const agendamentoPublicRouter = Router();
 
-agendamentoPublicRouter.post('/', validarSchema(criarAgendamentoSchema), controller.criar);
+agendamentoPublicRouter.post(
+  '/',
+  validarSchema(criarAgendamentoSchema),
+  asyncHandler(controller.criar),
+);

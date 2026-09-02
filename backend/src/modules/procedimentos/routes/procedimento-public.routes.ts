@@ -1,14 +1,13 @@
 import { Router } from 'express';
 
-import { ProcedimentoPublicController } from '../controllers/procedimento-public.controller.js';
-import { criarProcedimentoService } from '../factories/procedimento.factory.js';
+import { asyncHandler } from '../../../shared/utils/async-handler.js';
+import { criarProcedimentoPublicController } from '../factories/procedimento-public.factory.js';
 
 // Rotas publicas de procedimentos.
 // Apenas a listagem de procedimentos ativos e disponivel sem autenticacao.
 
-const procedimentoService = criarProcedimentoService();
-const controller = new ProcedimentoPublicController(procedimentoService);
+const controller = criarProcedimentoPublicController();
 
 export const procedimentoPublicRouter = Router();
 
-procedimentoPublicRouter.get('/', controller.listarAtivos);
+procedimentoPublicRouter.get('/', asyncHandler(controller.listarAtivos));

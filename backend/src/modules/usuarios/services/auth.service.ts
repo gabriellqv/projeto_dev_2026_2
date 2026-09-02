@@ -2,7 +2,7 @@ import type { Usuario } from '@prisma/client';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import { DomainError } from '../../../shared/errors/domain-error.js';
+import { AppError } from '../../../shared/errors/app-error.js';
 import { loginSchema, type LoginInput } from '../../../shared/schemas/login.schema.js';
 import type { UsuarioRepository } from '../usuario.repository.js';
 
@@ -22,20 +22,20 @@ export class AuthService {
     const parsed = loginSchema.safeParse(input);
 
     if (!parsed.success) {
-      throw new DomainError('Email e senha sao obrigatorios');
+      throw new AppError('Email e senha sao obrigatorios', 400);
     }
 
     const { email, senha } = parsed.data;
     const usuario = await this.usuarioRepository.buscarPorEmail(email);
 
     if (!usuario) {
-      throw new DomainError('Credenciais invalidas');
+      throw new AppError('Credenciais invalidas', 401);
     }
 
     const senhaValida = await bcryptjs.compare(senha, usuario.senha);
 
     if (!senhaValida) {
-      throw new DomainError('Credenciais invalidas');
+      throw new AppError('Credenciais invalidas', 401);
     }
 
     const token = this.gerarToken({
@@ -51,7 +51,7 @@ export class AuthService {
     const secret = process.env.JWT_SECRET;
 
     if (!secret) {
-      throw new DomainError('JWT_SECRET nao configurado');
+      throw new AppError('JWT_SECRET nao configurado', 500);
     }
 
     return jwt.sign(payload, secret, { expiresIn: '24h' });

@@ -11,14 +11,13 @@ import {
   atualizarStatusAgendamentoSchema,
   listarAgendamentosSchema,
 } from '../../../shared/schemas/agendamento.schema.js';
-import { AgendamentoAdminController } from '../controllers/agendamento-admin.controller.js';
-import { criarAgendamentoService } from '../factories/agendamento.factory.js';
+import { asyncHandler } from '../../../shared/utils/async-handler.js';
+import { criarAgendamentoAdminController } from '../factories/agendamento-admin.factory.js';
 
 // Rotas administrativas de agendamentos.
 // Requerem autenticacao e perfil de administrador.
 
-const agendamentoService = criarAgendamentoService();
-const controller = new AgendamentoAdminController(agendamentoService);
+const controller = criarAgendamentoAdminController();
 
 export const agendamentoAdminRouter = Router();
 
@@ -29,7 +28,7 @@ agendamentoAdminRouter.get(
   autenticar(),
   exigirAdmin,
   validarQuery(listarAgendamentosSchema),
-  controller.listar,
+  asyncHandler(controller.listar),
 );
 agendamentoAdminRouter.patch(
   '/:id/status',
@@ -37,5 +36,5 @@ agendamentoAdminRouter.patch(
   exigirAdmin,
   validarParams(paramsIdSchema),
   validarSchema(atualizarStatusAgendamentoSchema),
-  controller.atualizarStatus,
+  asyncHandler(controller.atualizarStatus),
 );

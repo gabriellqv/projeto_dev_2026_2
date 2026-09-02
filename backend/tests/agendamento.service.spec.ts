@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { InMemoryAgendamentoRepository } from '../src/modules/agendamentos/repositories/in-memory/agendamento.repository.in-memory.js';
 import { AgendamentoService } from '../src/modules/agendamentos/services/agendamento.service.js';
 import { InMemoryProcedimentoRepository } from '../src/modules/procedimentos/repositories/in-memory/procedimento.repository.in-memory.js';
-import { DomainError } from '../src/shared/errors/domain-error.js';
+import { AppError } from '../src/shared/errors/app-error.js';
 
 // Testes unitarios do service de agendamentos.
 // Validam regras de negocio usando repositorios in-memory.
@@ -59,7 +59,7 @@ describe('AgendamentoService', () => {
         horario: '14:00',
         procedimentoId: procedimento.id,
       }),
-    ).rejects.toThrow(DomainError);
+    ).rejects.toThrow(AppError);
   });
 
   it('deve recusar agendamento duplicado no mesmo horario', async () => {

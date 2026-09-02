@@ -1,16 +1,13 @@
 import { Router } from 'express';
 
-import { AuthController } from '../controllers/auth.controller.js';
-import { AuthService } from '../services/auth.service.js';
-import { PrismaUsuarioRepository } from '../usuario.repository.prisma.js';
+import { asyncHandler } from '../../../shared/utils/async-handler.js';
+import { criarAuthController } from '../factories/auth.factory.js';
 
 // Rotas publicas de autenticacao.
 // O controller gerencia o login de administradores.
 
-const usuarioRepository = new PrismaUsuarioRepository();
-const authService = new AuthService(usuarioRepository);
-const authController = new AuthController(authService);
+const authController = criarAuthController();
 
 export const authRouter = Router();
 
-authRouter.post('/login', authController.login);
+authRouter.post('/login', asyncHandler(authController.login));

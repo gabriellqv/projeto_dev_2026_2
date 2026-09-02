@@ -1,6 +1,6 @@
 import type { Procedimento } from '@prisma/client';
 
-import { DomainError } from '../../../shared/errors/domain-error.js';
+import { AppError } from '../../../shared/errors/app-error.js';
 import type {
   AtualizarProcedimentoInput,
   CriarProcedimentoInput,
@@ -34,7 +34,7 @@ export class ProcedimentoService {
     const procedimento = await this.repository.buscarPorId(id);
 
     if (!procedimento) {
-      throw new DomainError('Procedimento nao encontrado');
+      throw new AppError('Procedimento nao encontrado', 404);
     }
 
     return this.repository.atualizar(id, {

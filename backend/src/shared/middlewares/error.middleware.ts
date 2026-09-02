@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import { DomainError } from '../errors/domain-error.js';
+import { AppError } from '../errors/app-error.js';
 
 // Middleware central de tratamento de erros.
-// Converte DomainError em 400 e erros inesperados em 500.
+// Converte AppError no statusCode definido e erros inesperados em 500.
 // Garante respostas consistentes em todas as rotas.
 
 export function errorHandler(
@@ -12,8 +12,8 @@ export function errorHandler(
   response: Response,
   _next: NextFunction,
 ): void {
-  if (error instanceof DomainError) {
-    response.status(400).json({ message: error.message });
+  if (error instanceof AppError) {
+    response.status(error.statusCode).json({ message: error.message });
 
     return;
   }
