@@ -38,6 +38,18 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     });
   }
 
+  async existeAgendamento(email: string, data: Date, horario: string): Promise<boolean> {
+    const count = await prisma.agendamento.count({
+      where: {
+        email: { equals: email, mode: 'insensitive' },
+        data,
+        horario,
+      },
+    });
+
+    return count > 0;
+  }
+
   async criar(dados: AgendamentoData): Promise<Agendamento> {
     return prisma.agendamento.create({
       data: this.normalizarCamposOpcionais(dados),

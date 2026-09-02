@@ -15,6 +15,7 @@ export interface AgendamentoRepository {
   }): Promise<Agendamento[]>;
   contar(params: { status?: StatusAgendamento; busca?: string }): Promise<number>;
   buscarPorId(id: string): Promise<Agendamento | null>;
+  existeAgendamento(email: string, data: Date, horario: string): Promise<boolean>;
   criar(dados: AgendamentoData): Promise<Agendamento>;
   atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento>;
 }

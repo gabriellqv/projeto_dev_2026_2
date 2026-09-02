@@ -54,6 +54,15 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     return this.agendamentos.find((a) => a.id === id) ?? null;
   }
 
+  async existeAgendamento(email: string, data: Date, horario: string): Promise<boolean> {
+    return this.agendamentos.some(
+      (a) =>
+        a.email.toLowerCase() === email.toLowerCase() &&
+        a.data.getTime() === data.getTime() &&
+        a.horario === horario,
+    );
+  }
+
   async criar(dados: AgendamentoData): Promise<Agendamento> {
     const agendamento: Agendamento = {
       ...dados,

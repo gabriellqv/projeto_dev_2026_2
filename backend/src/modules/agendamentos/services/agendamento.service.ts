@@ -25,7 +25,11 @@ export class AgendamentoService {
       throw new AppError('Procedimento nao encontrado ou inativo', 404);
     }
 
-    const jaExiste = await this.verificarDuplicado(input.email, input.data, input.horario);
+    const jaExiste = await this.agendamentoRepository.existeAgendamento(
+      input.email,
+      input.data,
+      input.horario,
+    );
 
     if (jaExiste) {
       throw new AppError('Ja existe um agendamento para este email no mesmo horario', 409);
@@ -75,21 +79,6 @@ export class AgendamentoService {
     return this.agendamentoRepository.atualizarStatus(id, input.status);
   }
 
-  private async verificarDuplicado(email: string, data: Date, horario: string): Promise<boolean> {
-    const existentes = await this.agendamentoRepository.listar({
-      busca: email,
-      pagina: 1,
-      limite: 100,
-    });
-
-    return existentes.some(
-      (a) =>
-        a.email.toLowerCase() === email.toLowerCase() &&
-        this.mesmaData(a.data, data) &&
-        a.horario === horario,
-    );
-  }
-
   private validarTransicao(atual: StatusAgendamento, novo: StatusAgendamento): void {
     if (atual === novo) {
       return;
@@ -106,13 +95,5 @@ export class AgendamentoService {
     if (novo === 'ATENDIDO' && atual !== 'CONFIRMADO') {
       throw new AppError('Somente agendamentos confirmados podem ser atendidos', 409);
     }
-  }
-
-  private mesmaData(a: Date, b: Date): boolean {
-    return (
-      a.getUTCFullYear() === b.getUTCFullYear() &&
-      a.getUTCMonth() === b.getUTCMonth() &&
-      a.getUTCDate() === b.getUTCDate()
-    );
   }
 }
