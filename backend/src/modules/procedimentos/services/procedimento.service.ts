@@ -17,6 +17,10 @@ export class ProcedimentoService {
     return this.repository.listarAtivos();
   }
 
+  async listarTodos(): Promise<Procedimento[]> {
+    return this.repository.listarTodos();
+  }
+
   async buscarPorId(id: string): Promise<Procedimento | null> {
     return this.repository.buscarPorId(id);
   }

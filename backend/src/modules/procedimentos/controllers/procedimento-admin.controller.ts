@@ -10,7 +10,7 @@ export class ProcedimentoAdminController {
   constructor(private readonly procedimentoService: ProcedimentoService) {}
 
   listarTodos: RequestHandler = async (_request: Request, response: Response): Promise<void> => {
-    const procedimentos = await this.procedimentoService.listarAtivos();
+    const procedimentos = await this.procedimentoService.listarTodos();
 
     response.json(procedimentos);
   };

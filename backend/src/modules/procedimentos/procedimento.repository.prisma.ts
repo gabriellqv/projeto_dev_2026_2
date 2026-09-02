@@ -16,6 +16,12 @@ export class PrismaProcedimentoRepository implements ProcedimentoRepository {
     });
   }
 
+  async listarTodos(): Promise<Procedimento[]> {
+    return prisma.procedimento.findMany({
+      orderBy: { criadoEm: 'asc' },
+    });
+  }
+
   async buscarPorId(id: string): Promise<Procedimento | null> {
     return prisma.procedimento.findUnique({
       where: { id },
