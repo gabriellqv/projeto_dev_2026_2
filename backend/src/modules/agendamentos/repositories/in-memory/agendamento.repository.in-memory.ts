@@ -51,8 +51,16 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     return resultado.length;
   }
 
-  async buscarPorId(id: string): Promise<Agendamento | null> {
-    return this.agendamentos.find((a) => a.id === id) ?? null;
+  async buscarPorId(id: string): Promise<(Agendamento & { historico: HistoricoStatus[] }) | null> {
+    const agendamento = this.agendamentos.find((a) => a.id === id);
+
+    if (!agendamento) {
+      return null;
+    }
+
+    const historicoDoAgendamento = this.historico.filter((h) => h.agendamentoId === id);
+
+    return { ...agendamento, historico: historicoDoAgendamento };
   }
 
   async existeAgendamento(email: string, data: Date, horario: string): Promise<boolean> {

@@ -7,7 +7,7 @@ import type {
   ListarAgendamentosInput,
 } from '../../../shared/schemas/agendamento.schema.js';
 import type { ProcedimentoRepository } from '../../procedimentos/procedimento.repository.js';
-import type { AgendamentoRepository } from '../agendamento.repository.js';
+import type { AgendamentoComHistorico, AgendamentoRepository } from '../agendamento.repository.js';
 
 // Service centraliza a logica de negocio de agendamentos.
 // Depende das interfaces dos repositorios, nao das implementacoes Prisma.
@@ -66,12 +66,18 @@ export class AgendamentoService {
     return { agendamentos, total };
   }
 
-  async atualizarStatus(id: string, input: AtualizarStatusAgendamentoInput): Promise<Agendamento> {
+  async buscarPorId(id: string): Promise<AgendamentoComHistorico> {
     const agendamento = await this.agendamentoRepository.buscarPorId(id);
 
     if (!agendamento) {
       throw new AppError('Agendamento nao encontrado', 404);
     }
+
+    return agendamento;
+  }
+
+  async atualizarStatus(id: string, input: AtualizarStatusAgendamentoInput): Promise<Agendamento> {
+    const agendamento = await this.buscarPorId(id);
 
     // Valida transicoes permitidas entre status.
     this.validarTransicao(agendamento.status, input.status);

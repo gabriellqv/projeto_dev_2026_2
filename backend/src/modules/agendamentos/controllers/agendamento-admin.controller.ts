@@ -3,7 +3,7 @@ import type { Request, RequestHandler, Response } from 'express';
 import type { AgendamentoService } from '../services/agendamento.service.js';
 
 // Controller administrativo de agendamentos.
-// Responsavel por listar e atualizar o status dos agendamentos no painel.
+// Responsavel por listar, detalhar e atualizar o status dos agendamentos no painel.
 // Erros de dominio sao tratados pelo middleware global de erros.
 
 export class AgendamentoAdminController {
@@ -18,6 +18,12 @@ export class AgendamentoAdminController {
     });
 
     response.json(resultado);
+  };
+
+  buscarPorId: RequestHandler = async (request: Request, response: Response): Promise<void> => {
+    const agendamento = await this.agendamentoService.buscarPorId(String(request.params.id));
+
+    response.json(agendamento);
   };
 
   atualizarStatus: RequestHandler = async (request: Request, response: Response): Promise<void> => {

@@ -32,6 +32,14 @@ agendamentoAdminRouter.get(
   validarQuery(listarAgendamentosSchema),
   asyncHandler(controller.listar),
 );
+agendamentoAdminRouter.get(
+  '/:id',
+  adminLimiter,
+  autenticar(),
+  exigirAdmin,
+  validarParams(paramsIdSchema),
+  asyncHandler(controller.buscarPorId),
+);
 agendamentoAdminRouter.patch(
   '/:id/status',
   adminLimiter,

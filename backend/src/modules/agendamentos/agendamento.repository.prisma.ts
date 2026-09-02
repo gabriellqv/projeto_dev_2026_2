@@ -2,7 +2,11 @@ import type { Agendamento, Prisma, StatusAgendamento } from '@prisma/client';
 
 import { prisma } from '../../shared/database/prisma.js';
 
-import type { AgendamentoData, AgendamentoRepository } from './agendamento.repository.js';
+import type {
+  AgendamentoComHistorico,
+  AgendamentoData,
+  AgendamentoRepository,
+} from './agendamento.repository.js';
 
 // Implementacao do repositorio de agendamentos com Prisma.
 // Filtros de busca e paginacao ficam centralizados aqui.
@@ -31,10 +35,10 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     });
   }
 
-  async buscarPorId(id: string): Promise<Agendamento | null> {
+  async buscarPorId(id: string): Promise<AgendamentoComHistorico | null> {
     return prisma.agendamento.findUnique({
       where: { id },
-      include: { procedimento: true },
+      include: { procedimento: true, historico: { orderBy: { alteradoEm: 'asc' } } },
     });
   }
 
