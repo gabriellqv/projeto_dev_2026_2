@@ -32,6 +32,9 @@ jobs:
       - name: Instala dependências
         run: npm ci
 
+      - name: Gera Prisma Client
+        run: npm run db:generate -w backend
+
       - name: Verifica formatação
         run: npm run format:check
 
