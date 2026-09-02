@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     include: ['tests/**/*.integration.spec.ts'],
     setupFiles: ['tests/integration/setup.ts'],
+    fileParallelism: false,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
