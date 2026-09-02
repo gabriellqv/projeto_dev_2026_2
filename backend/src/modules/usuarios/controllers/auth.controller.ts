@@ -36,7 +36,12 @@ export class AuthController {
     });
   };
 
-  private serializarUsuario(usuario: { id: string; email: string; nome: string; admin: boolean }) {
+  private serializarUsuario(usuario: { id: string; email: string; nome: string; admin: boolean }): {
+    id: string;
+    email: string;
+    nome: string;
+    admin: boolean;
+  } {
     return {
       id: usuario.id,
       email: usuario.email,

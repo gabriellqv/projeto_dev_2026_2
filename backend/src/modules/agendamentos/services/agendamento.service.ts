@@ -25,6 +25,8 @@ export class AgendamentoService {
       throw new AppError('Procedimento nao encontrado ou inativo', 404);
     }
 
+    this.validarDataFutura(input.data);
+
     const jaExiste = await this.agendamentoRepository.existeAgendamento(
       input.email,
       input.data,
@@ -100,6 +102,18 @@ export class AgendamentoService {
 
     if (novo === 'ATENDIDO' && atual !== 'CONFIRMADO') {
       throw new AppError('Somente agendamentos confirmados podem ser atendidos', 409);
+    }
+  }
+
+  private validarDataFutura(data: Date): void {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataAgendamento = new Date(data);
+    dataAgendamento.setHours(0, 0, 0, 0);
+
+    if (dataAgendamento.getTime() < hoje.getTime()) {
+      throw new AppError('Nao e possivel agendar para uma data no passado', 400);
     }
   }
 }
