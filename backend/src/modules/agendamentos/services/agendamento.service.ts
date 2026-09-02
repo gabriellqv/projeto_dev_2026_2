@@ -1,6 +1,6 @@
 import type { Agendamento, StatusAgendamento } from '@prisma/client';
 
-import { DomainError } from '../../../shared/errors/domain-error.js';
+import { AppError } from '../../../shared/errors/app-error.js';
 import type {
   AtualizarStatusAgendamentoInput,
   CriarAgendamentoInput,
@@ -22,13 +22,13 @@ export class AgendamentoService {
     const procedimento = await this.procedimentoRepository.buscarPorId(input.procedimentoId);
 
     if (!procedimento || !procedimento.ativa) {
-      throw new DomainError('Procedimento nao encontrado ou inativo');
+      throw new AppError('Procedimento nao encontrado ou inativo', 404);
     }
 
     const jaExiste = await this.verificarDuplicado(input.email, input.data, input.horario);
 
     if (jaExiste) {
-      throw new DomainError('Ja existe um agendamento para este email no mesmo horario');
+      throw new AppError('Ja existe um agendamento para este email no mesmo horario', 409);
     }
 
     // Status inicial sempre pendente, mesmo se outro valor for enviado.
@@ -66,7 +66,7 @@ export class AgendamentoService {
     const agendamento = await this.agendamentoRepository.buscarPorId(id);
 
     if (!agendamento) {
-      throw new DomainError('Agendamento nao encontrado');
+      throw new AppError('Agendamento nao encontrado', 404);
     }
 
     // Valida transicoes permitidas entre status.
@@ -96,15 +96,15 @@ export class AgendamentoService {
     }
 
     if (atual === 'CANCELADO') {
-      throw new DomainError('Nao e possivel alterar o status de um agendamento cancelado');
+      throw new AppError('Nao e possivel alterar o status de um agendamento cancelado', 409);
     }
 
     if (atual === 'ATENDIDO') {
-      throw new DomainError('Nao e possivel alterar o status de um agendamento ja atendido');
+      throw new AppError('Nao e possivel alterar o status de um agendamento ja atendido', 409);
     }
 
     if (novo === 'ATENDIDO' && atual !== 'CONFIRMADO') {
-      throw new DomainError('Somente agendamentos confirmados podem ser atendidos');
+      throw new AppError('Somente agendamentos confirmados podem ser atendidos', 409);
     }
   }
 

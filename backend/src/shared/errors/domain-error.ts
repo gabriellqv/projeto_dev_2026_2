@@ -1,9 +1,12 @@
 // Erro de dominio padrao do sistema.
-// Usado pelos services para sinalizar violacoes de regra de negocio.
+// Mantido como alias de AppError para compatibilidade com testes existentes.
+// @deprecated Prefira usar AppError com statusCode explicito.
 
-export class DomainError extends Error {
+import { AppError } from './app-error.js';
+
+export class DomainError extends AppError {
   constructor(mensagem: string) {
-    super(mensagem);
+    super(mensagem, 400);
     this.name = 'DomainError';
   }
 }
