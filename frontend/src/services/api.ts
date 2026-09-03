@@ -17,11 +17,17 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
-    const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+    const axiosError = error as {
+      response?: { data?: { message?: string; errors?: string[] } };
+      message?: string;
+    };
+    const errData = axiosError.response?.data;
     const message =
-      axiosError.response?.data?.message ??
-      axiosError.message ??
-      'Erro inesperado. Tente novamente mais tarde.';
+      errData?.errors && errData.errors.length > 0
+        ? `${errData.message ?? 'Erro'}: ${errData.errors.join(', ')}`
+        : (errData?.message ??
+          axiosError.message ??
+          'Erro inesperado. Tente novamente mais tarde.');
 
     return Promise.reject(new Error(message));
   },
