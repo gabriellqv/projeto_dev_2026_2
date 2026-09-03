@@ -105,6 +105,10 @@ export function ProcedureList({
                 src={meta.imagem}
                 alt={tituloFormatado}
                 className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+                width={600}
+                height={350}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
 

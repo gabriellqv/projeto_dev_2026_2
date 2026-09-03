@@ -160,6 +160,10 @@ export function AboutClinicSection(): React.ReactNode {
                       src={slide.imagem}
                       alt={slide.titulo}
                       className="h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      width={1000}
+                      height={600}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
 

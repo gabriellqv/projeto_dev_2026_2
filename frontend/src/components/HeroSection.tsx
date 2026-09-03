@@ -122,6 +122,11 @@ export function HeroSection(): React.ReactNode {
                   src="/images/doutora.webp"
                   alt="Dra. Beatriz Santos - Cirurgiã-Dentista e Responsável Técnica da Clínica Sorriso Mineiro"
                   className="h-[460px] sm:h-[500px] w-full object-cover object-top transition-transform duration-700 hover:scale-105"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  width={900}
+                  height={1000}
                 />
 
                 {/* Overlay sutil na base da foto */}
