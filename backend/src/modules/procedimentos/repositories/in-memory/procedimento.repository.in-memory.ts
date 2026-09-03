@@ -1,5 +1,6 @@
+import { randomUUID } from 'node:crypto';
+
 import type { Procedimento } from '@prisma/client';
-import { v4 as uuid } from 'uuid';
 
 import type { ProcedimentoData, ProcedimentoRepository } from '../../procedimento.repository.js';
 
@@ -24,7 +25,7 @@ export class InMemoryProcedimentoRepository implements ProcedimentoRepository {
   async criar(dados: ProcedimentoData): Promise<Procedimento> {
     const procedimento = {
       ...dados,
-      id: uuid(),
+      id: randomUUID(),
       criadoEm: new Date(),
       atualizadoEm: new Date(),
     } as Procedimento;
