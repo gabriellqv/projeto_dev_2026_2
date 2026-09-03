@@ -35,12 +35,7 @@ describe('errorHandler', () => {
   it('deve retornar o statusCode de um AppError', () => {
     const response = criarResponseFake();
 
-    errorHandler(
-      new AppError('Nao autorizado', 401),
-      {} as Request,
-      response,
-      {} as NextFunction,
-    );
+    errorHandler(new AppError('Nao autorizado', 401), {} as Request, response, {} as NextFunction);
 
     expect(response.statusCode).toBe(401);
     expect(response.jsonPayload).toEqual({ message: 'Nao autorizado' });

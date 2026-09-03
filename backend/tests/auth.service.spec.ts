@@ -21,7 +21,11 @@ describe('AuthService', () => {
     service = new AuthService(usuarioRepository, authConfig);
   });
 
-  async function criarUsuario(email: string, senha: string, admin = false): Promise<{ id: string }> {
+  async function criarUsuario(
+    email: string,
+    senha: string,
+    admin = false,
+  ): Promise<{ id: string }> {
     const senhaHash = await import('bcryptjs').then((bc) => bc.hash(senha, 8));
 
     return usuarioRepository.criar({
@@ -42,17 +46,17 @@ describe('AuthService', () => {
   });
 
   it('deve recusar login com email inexistente', async () => {
-    await expect(service.login({ email: 'naoexiste@email.com', senha: 'senha123' })).rejects.toThrow(
-      new AppError('Credenciais invalidas', 401),
-    );
+    await expect(
+      service.login({ email: 'naoexiste@email.com', senha: 'senha123' }),
+    ).rejects.toThrow(new AppError('Credenciais invalidas', 401));
   });
 
   it('deve recusar login com senha incorreta', async () => {
     await criarUsuario('teste@email.com', 'senha123');
 
-    await expect(service.login({ email: 'teste@email.com', senha: 'senha-errada' })).rejects.toThrow(
-      new AppError('Credenciais invalidas', 401),
-    );
+    await expect(
+      service.login({ email: 'teste@email.com', senha: 'senha-errada' }),
+    ).rejects.toThrow(new AppError('Credenciais invalidas', 401));
   });
 
   it('deve recusar login com dados invalidos', async () => {
