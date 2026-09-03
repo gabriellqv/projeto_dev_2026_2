@@ -1,5 +1,6 @@
+import { randomUUID } from 'node:crypto';
+
 import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/client';
-import { v4 as uuid } from 'uuid';
 
 import type { AgendamentoData, AgendamentoRepository } from '../../agendamento.repository.js';
 
@@ -75,7 +76,7 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
   async criar(dados: AgendamentoData): Promise<Agendamento> {
     const agendamento: Agendamento = {
       ...dados,
-      id: uuid(),
+      id: randomUUID(),
       status: 'PENDENTE',
       criadoEm: new Date(),
       atualizadoEm: new Date(),
@@ -98,7 +99,7 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     }
 
     this.historico.push({
-      id: uuid(),
+      id: randomUUID(),
       agendamentoId: id,
       statusAnterior,
       statusNovo: status,
