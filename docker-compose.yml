@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: odontoagenda-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: odontoagenda
+      POSTGRES_PASSWORD: odontoagenda
+      POSTGRES_DB: odontoagenda
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U odontoagenda -d odontoagenda']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: odontoagenda-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://odontoagenda:odontoagenda@postgres:5432/odontoagenda?schema=public
+      JWT_SECRET: sua_chave_jwt_segura_aqui_minimo_32_caracteres
+      PORT: 3000
+      CORS_ORIGIN: http://localhost
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "cd backend && npx prisma migrate deploy && node dist/prisma/seed.js && node dist/src/server.js"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: odontoagenda-frontend
+    restart: unless-stopped
+    ports:
+      - '80:80'
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
