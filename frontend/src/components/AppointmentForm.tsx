@@ -670,6 +670,7 @@ export function AppointmentForm({
                       key={dataIso}
                       type="button"
                       disabled={desabilitado}
+                      aria-label={`${String(numeroDia)} de ${MESES[mesAtual]} de ${String(anoAtual)}${eHoje ? ', hoje' : ''}${desabilitado ? ', indisponível' : ''}`}
                       onClick={() => {
                         handleChange('data', dataIso);
                         setDataAberta(false);
