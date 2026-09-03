@@ -2,7 +2,9 @@ import cors from 'cors';
 import type { Application } from 'express';
 import express from 'express';
 import helmet from 'helmet';
+import swaggerUi from 'swagger-ui-express';
 
+import { swaggerDocument } from './config/swagger.js';
 import { agendamentoAdminRouter } from './modules/agendamentos/routes/agendamento-admin.routes.js';
 import { agendamentoPublicRouter } from './modules/agendamentos/routes/agendamento-public.routes.js';
 import { healthRouter } from './modules/health/routes/health.routes.js';
@@ -25,6 +27,9 @@ const allowedOrigins = process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(express.json());
+
+// Documentacao interativa da API em /api-docs.
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Health check verifica tambem a conectividade com o PostgreSQL.
 app.use('/api/health', healthRouter);
