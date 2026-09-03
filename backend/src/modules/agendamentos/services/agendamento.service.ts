@@ -7,7 +7,7 @@ import type {
   ListarAgendamentosInput,
 } from '../../../shared/schemas/agendamento.schema.js';
 import type { ProcedimentoRepository } from '../../procedimentos/procedimento.repository.js';
-import type { AgendamentoRepository } from '../agendamento.repository.js';
+import type { AgendamentoComHistorico, AgendamentoRepository } from '../agendamento.repository.js';
 
 // Service centraliza a logica de negocio de agendamentos.
 // Depende das interfaces dos repositorios, nao das implementacoes Prisma.
@@ -24,6 +24,8 @@ export class AgendamentoService {
     if (!procedimento || !procedimento.ativa) {
       throw new AppError('Procedimento nao encontrado ou inativo', 404);
     }
+
+    this.validarDataFutura(input.data);
 
     const jaExiste = await this.agendamentoRepository.existeAgendamento(
       input.email,
@@ -66,17 +68,23 @@ export class AgendamentoService {
     return { agendamentos, total };
   }
 
-  async atualizarStatus(id: string, input: AtualizarStatusAgendamentoInput): Promise<Agendamento> {
+  async buscarPorId(id: string): Promise<AgendamentoComHistorico> {
     const agendamento = await this.agendamentoRepository.buscarPorId(id);
 
     if (!agendamento) {
       throw new AppError('Agendamento nao encontrado', 404);
     }
 
+    return agendamento;
+  }
+
+  async atualizarStatus(id: string, input: AtualizarStatusAgendamentoInput): Promise<Agendamento> {
+    const agendamento = await this.buscarPorId(id);
+
     // Valida transicoes permitidas entre status.
     this.validarTransicao(agendamento.status, input.status);
 
-    return this.agendamentoRepository.atualizarStatus(id, input.status);
+    return this.agendamentoRepository.atualizarStatus(id, input.status, agendamento.status);
   }
 
   private validarTransicao(atual: StatusAgendamento, novo: StatusAgendamento): void {
@@ -94,6 +102,18 @@ export class AgendamentoService {
 
     if (novo === 'ATENDIDO' && atual !== 'CONFIRMADO') {
       throw new AppError('Somente agendamentos confirmados podem ser atendidos', 409);
+    }
+  }
+
+  private validarDataFutura(data: Date): void {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataAgendamento = new Date(data);
+    dataAgendamento.setHours(0, 0, 0, 0);
+
+    if (dataAgendamento.getTime() < hoje.getTime()) {
+      throw new AppError('Nao e possivel agendar para uma data no passado', 400);
     }
   }
 }

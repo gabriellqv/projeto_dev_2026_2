@@ -40,6 +40,8 @@ export function autenticar(): RequestHandler {
       next();
     } catch {
       response.status(401).json({ message: 'Token invalido ou expirado' });
+
+      return;
     }
   };
 }

@@ -2,7 +2,11 @@ import type { Agendamento, Prisma, StatusAgendamento } from '@prisma/client';
 
 import { prisma } from '../../shared/database/prisma.js';
 
-import type { AgendamentoData, AgendamentoRepository } from './agendamento.repository.js';
+import type {
+  AgendamentoComHistorico,
+  AgendamentoData,
+  AgendamentoRepository,
+} from './agendamento.repository.js';
 
 // Implementacao do repositorio de agendamentos com Prisma.
 // Filtros de busca e paginacao ficam centralizados aqui.
@@ -18,7 +22,7 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
 
     return prisma.agendamento.findMany({
       where: this.montarWhere(params.status, params.busca),
-      orderBy: { data: 'asc' },
+      orderBy: [{ data: 'asc' }, { horario: 'asc' }],
       skip,
       take: params.limite,
       include: { procedimento: true },
@@ -31,10 +35,10 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     });
   }
 
-  async buscarPorId(id: string): Promise<Agendamento | null> {
+  async buscarPorId(id: string): Promise<AgendamentoComHistorico | null> {
     return prisma.agendamento.findUnique({
       where: { id },
-      include: { procedimento: true },
+      include: { procedimento: true, historico: { orderBy: { alteradoEm: 'asc' } } },
     });
   }
 
@@ -67,10 +71,22 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     };
   }
 
-  async atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento> {
+  async atualizarStatus(
+    id: string,
+    status: StatusAgendamento,
+    statusAnterior: StatusAgendamento,
+  ): Promise<Agendamento> {
     return prisma.agendamento.update({
       where: { id },
-      data: { status },
+      data: {
+        status,
+        historico: {
+          create: {
+            statusAnterior,
+            statusNovo: status,
+          },
+        },
+      },
       include: { procedimento: true },
     });
   }

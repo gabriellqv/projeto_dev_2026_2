@@ -1,4 +1,4 @@
-import type { Agendamento, StatusAgendamento } from '@prisma/client';
+import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/client';
 import { v4 as uuid } from 'uuid';
 
 import type { AgendamentoData, AgendamentoRepository } from '../../agendamento.repository.js';
@@ -8,6 +8,7 @@ import type { AgendamentoData, AgendamentoRepository } from '../../agendamento.r
 
 export class InMemoryAgendamentoRepository implements AgendamentoRepository {
   private agendamentos: Agendamento[] = [];
+  private historico: HistoricoStatus[] = [];
 
   async listar(params: {
     status?: StatusAgendamento;
@@ -50,8 +51,16 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     return resultado.length;
   }
 
-  async buscarPorId(id: string): Promise<Agendamento | null> {
-    return this.agendamentos.find((a) => a.id === id) ?? null;
+  async buscarPorId(id: string): Promise<(Agendamento & { historico: HistoricoStatus[] }) | null> {
+    const agendamento = this.agendamentos.find((a) => a.id === id);
+
+    if (!agendamento) {
+      return null;
+    }
+
+    const historicoDoAgendamento = this.historico.filter((h) => h.agendamentoId === id);
+
+    return { ...agendamento, historico: historicoDoAgendamento };
   }
 
   async existeAgendamento(email: string, data: Date, horario: string): Promise<boolean> {
@@ -77,12 +86,24 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     return agendamento;
   }
 
-  async atualizarStatus(id: string, status: StatusAgendamento): Promise<Agendamento> {
+  async atualizarStatus(
+    id: string,
+    status: StatusAgendamento,
+    statusAnterior: StatusAgendamento,
+  ): Promise<Agendamento> {
     const indice = this.agendamentos.findIndex((a) => a.id === id);
 
     if (indice === -1) {
       throw new Error(`Agendamento nao encontrado: ${id}`);
     }
+
+    this.historico.push({
+      id: uuid(),
+      agendamentoId: id,
+      statusAnterior,
+      statusNovo: status,
+      alteradoEm: new Date(),
+    });
 
     this.agendamentos[indice] = {
       ...this.agendamentos[indice],
