@@ -1,9 +1,13 @@
 import { useState, type SyntheticEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { ThemeToggle } from '../components/ThemeToggle.js';
+import { Alert } from '../components/ui/Alert.js';
+import { Button } from '../components/ui/Button.js';
+import { Input } from '../components/ui/Input.js';
 import { useAuth } from '../contexts/AuthContext.js';
 
-// Pagina de login do painel administrativo.
+// Página de login do painel administrativo.
 
 export function LoginPage(): React.ReactNode {
   const navigate = useNavigate();
@@ -31,14 +35,43 @@ export function LoginPage(): React.ReactNode {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-teal-50 px-4">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <h1 className="mb-6 text-center text-2xl font-bold text-teal-800">Painel Administrativo</h1>
+    <div className="relative flex min-h-screen items-center justify-center bg-canvas px-4 py-12">
+      <div className="absolute top-6 right-6">
+        <ThemeToggle />
+      </div>
+
+      <div className="w-full max-w-md rounded-card border border-default bg-surface p-8 sm:p-10 shadow-modal backdrop-blur-xl">
+        <div className="mb-8 text-center space-y-3">
+          <img
+            src="/images/logo.png"
+            alt="Sorriso Mineiro Logo"
+            className="mx-auto h-[72px] w-[72px] object-contain"
+          />
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-primary">
+              Painel Administrativo
+            </h1>
+            <p className="text-2xs text-muted mt-1">Sorriso Mineiro — Gestão de Atendimentos</p>
+          </div>
+        </div>
 
         {erro && (
-          <div className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700" role="alert">
+          <Alert
+            variant="error"
+            className="mb-6"
+            icon={
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            }
+          >
             {erro}
-          </div>
+          </Alert>
         )}
 
         <form
@@ -48,48 +81,67 @@ export function LoginPage(): React.ReactNode {
           className="space-y-4"
           noValidate
         >
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              E-mail
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="block text-2xs font-bold text-secondary">
+              E-mail de Acesso
             </label>
-            <input
+            <Input
               id="email"
               type="email"
+              placeholder="admin@sorrisomineiro.com.br"
               value={email}
               onChange={(evento) => {
                 setEmail(evento.target.value);
               }}
-              className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-teal-500 focus:outline-none"
               disabled={carregando}
               required
             />
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="senha" className="block text-sm font-medium text-gray-700">
+          <div className="space-y-1.5">
+            <label htmlFor="senha" className="block text-2xs font-bold text-secondary">
               Senha
             </label>
-            <input
+            <Input
               id="senha"
               type="password"
+              placeholder="••••••••"
               value={senha}
               onChange={(evento) => {
                 setSenha(evento.target.value);
               }}
-              className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-teal-500 focus:outline-none"
               disabled={carregando}
               required
             />
           </div>
 
-          <button
+          <Button
             type="submit"
-            disabled={carregando}
-            className="w-full rounded-md bg-teal-600 px-6 py-3 font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
+            variant="gradient"
+            size="lg"
+            className="w-full mt-2"
+            isLoading={carregando}
           >
-            {carregando ? 'Entrando...' : 'Entrar'}
-          </button>
+            Acessar Painel
+          </Button>
         </form>
+
+        <div className="mt-6 border-t border-default pt-5 text-center">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-2xs font-semibold text-muted hover:text-link transition-colors"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Voltar para o site público
+          </Link>
+        </div>
       </div>
     </div>
   );
