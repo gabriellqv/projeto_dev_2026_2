@@ -5,6 +5,7 @@ import helmet from 'helmet';
 
 import { agendamentoAdminRouter } from './modules/agendamentos/routes/agendamento-admin.routes.js';
 import { agendamentoPublicRouter } from './modules/agendamentos/routes/agendamento-public.routes.js';
+import { healthRouter } from './modules/health/routes/health.routes.js';
 import { procedimentoAdminRouter } from './modules/procedimentos/routes/procedimento-admin.routes.js';
 import { procedimentoPublicRouter } from './modules/procedimentos/routes/procedimento-public.routes.js';
 import { authRouter } from './modules/usuarios/routes/auth.routes.js';
@@ -25,10 +26,8 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(express.json());
 
-// Health check simples para validar se a API esta no ar.
-app.get('/api/health', (_request, response) => {
-  response.json({ status: 'ok' });
-});
+// Health check verifica tambem a conectividade com o PostgreSQL.
+app.use('/api/health', healthRouter);
 
 // Rotas publicas.
 app.use('/api/procedimentos', procedimentoPublicRouter);
