@@ -10,8 +10,8 @@ export function ProtectedRoute(): React.ReactNode {
 
   if (carregando) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-gray-600">Carregando...</p>
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <p className="text-muted">Carregando...</p>
       </div>
     );
   }

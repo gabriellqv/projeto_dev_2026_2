@@ -18,10 +18,13 @@ export const atualizarStatusAgendamentoSchema = z.object({
 });
 
 export const listarAgendamentosSchema = z.object({
-  status: z.enum(['PENDENTE', 'CONFIRMADO', 'CANCELADO', 'ATENDIDO']).optional(),
+  status: z
+    .enum(['PENDENTE', 'CONFIRMADO', 'CANCELADO', 'ATENDIDO'])
+    .optional()
+    .or(z.literal('').transform(() => undefined)),
   busca: z.string().optional(),
-  pagina: z.number().int().positive().default(1),
-  limite: z.number().int().positive().max(100).default(10),
+  pagina: z.coerce.number().int().positive().default(1),
+  limite: z.coerce.number().int().positive().max(100).default(10),
 });
 
 export type CriarAgendamentoInput = z.infer<typeof criarAgendamentoSchema>;

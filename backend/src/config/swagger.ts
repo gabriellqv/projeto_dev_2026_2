@@ -5,9 +5,9 @@ import { OpenApiBuilder as Builder } from 'openapi3-ts/oas31';
 // Define os endpoints publicos e administrativos disponiveis.
 
 const builder = new Builder()
-  .addTitle('OdontoAgenda API')
+  .addTitle('Sorriso Mineiro API')
   .addDescription(
-    'API REST para agendamento de consultas odontologicas na clinica Sorriso Mineiro.',
+    'API REST para agendamento de consultas odontológicas na clínica Sorriso Mineiro.',
   )
   .addVersion('1.0.0')
   .addServer({ url: 'http://localhost:3000/api', description: 'Desenvolvimento local' });
@@ -429,6 +429,26 @@ builder.addPath('/admin/procedimentos/{id}', {
     responses: {
       '200': {
         description: 'Procedimento atualizado',
+        content: {
+          'application/json': {
+            schema: { $ref: '#/components/schemas/Procedimento' },
+          },
+        },
+      },
+      '401': { description: 'Nao autenticado' },
+      '404': { description: 'Procedimento nao encontrado' },
+    },
+  },
+  delete: {
+    tags: ['Admin'],
+    summary: 'Desativa/exclui um procedimento com seguranca',
+    security: [{ bearerAuth: [] }],
+    parameters: [
+      { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
+    ],
+    responses: {
+      '200': {
+        description: 'Procedimento desativado/excluido',
         content: {
           'application/json': {
             schema: { $ref: '#/components/schemas/Procedimento' },

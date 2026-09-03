@@ -20,18 +20,18 @@ export interface AgendamentoAdmin {
   observacao: string | null;
   status: string;
   procedimentoId: string;
+  procedimento?: Procedimento;
 }
 
 export interface HistoricoStatus {
   id: string;
   agendamentoId: string;
-  statusAnterior: string;
+  statusAnterior: string | null;
   statusNovo: string;
   alteradoEm: string;
 }
 
-export interface AgendamentoDetalhe {
-  agendamento: AgendamentoAdmin;
+export interface AgendamentoDetalhe extends AgendamentoAdmin {
   historico: HistoricoStatus[];
 }
 
@@ -90,6 +90,11 @@ export const adminApi = {
     },
   ): Promise<Procedimento> {
     const response = await api.patch<Procedimento>(`/admin/procedimentos/${id}`, dados);
+    return response.data;
+  },
+
+  async excluirProcedimento(id: string): Promise<Procedimento> {
+    const response = await api.delete<Procedimento>(`/admin/procedimentos/${id}`);
     return response.data;
   },
 };
