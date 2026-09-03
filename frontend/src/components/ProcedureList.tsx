@@ -32,27 +32,27 @@ function obterMetaProcedimento(titulo: string): {
 
   if (normalizado.includes('clareamento')) {
     return {
-      imagem: '/images/clareamento-real.jpg',
+      imagem: '/images/clareamento-real.webp',
       tag: 'Estética Dental',
       descricao: 'Clareamento seguro para um sorriso mais branco e radiante sem sensibilidade.',
     };
   }
   if (normalizado.includes('restaura')) {
     return {
-      imagem: '/images/restauracao-real.jpg',
+      imagem: '/images/restauracao-real.webp',
       tag: 'Restauração Estética',
       descricao: 'Resina composta estética de alta resistência com acabamento invisível e natural.',
     };
   }
   if (normalizado.includes('canal')) {
     return {
-      imagem: '/images/canal-real.jpg',
+      imagem: '/images/canal-real.webp',
       tag: 'Tratamento de Canal',
       descricao: 'Tecnologia avançada e anestesia suave para um tratamento rápido e 100% sem dor.',
     };
   }
   return {
-    imagem: '/images/limpeza-real.jpg',
+    imagem: '/images/limpeza-real.webp',
     tag: 'Prevenção & Saúde',
     descricao: 'Remoção de placa, tártaro, aplicação de flúor e limpeza profunda dos dentes.',
   };

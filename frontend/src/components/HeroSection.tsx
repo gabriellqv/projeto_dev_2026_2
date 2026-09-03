@@ -119,7 +119,7 @@ export function HeroSection(): React.ReactNode {
               {/* Moldura principal da foto da doutora */}
               <div className="relative overflow-hidden rounded-3xl border-4 border-surface bg-inset shadow-2xl animate-hero-doctor">
                 <img
-                  src="/images/doutora.jpg"
+                  src="/images/doutora.webp"
                   alt="Dra. Beatriz Santos - Cirurgiã-Dentista e Responsável Técnica da Clínica Sorriso Mineiro"
                   className="h-[460px] sm:h-[500px] w-full object-cover object-top transition-transform duration-700 hover:scale-105"
                 />
