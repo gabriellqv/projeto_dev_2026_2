@@ -7,35 +7,45 @@ import bcryptjs from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main(): Promise<void> {
-  await prisma.procedimento.createMany({
-    data: [
-      {
-        titulo: 'Limpeza e Profilaxia',
-        ativa: true,
-        preco: 150.0,
-        duracaoMinutos: 45,
-      },
-      {
-        titulo: 'Clareamento Dental',
-        ativa: true,
-        preco: 800.0,
-        duracaoMinutos: 60,
-      },
-      {
-        titulo: 'Restauracao de Resina',
-        ativa: true,
-        preco: 250.0,
-        duracaoMinutos: 50,
-      },
-      {
-        titulo: 'Tratamento de Canal',
-        ativa: true,
-        preco: 1200.0,
-        duracaoMinutos: 90,
-      },
-    ],
-    skipDuplicates: true,
+  // Seed idempotente: so cria procedimentos se ainda nao existirem.
+  // Usa titulo como chave natural para evitar duplicatas em reinicializacoes.
+  const procedimentosExistentes = await prisma.procedimento.findMany({
+    select: { titulo: true },
   });
+  const titulosExistentes = new Set(procedimentosExistentes.map((p) => p.titulo));
+
+  const procedimentosParaCriar = [
+    {
+      titulo: 'Limpeza e Profilaxia',
+      ativa: true,
+      preco: 150.0,
+      duracaoMinutos: 45,
+    },
+    {
+      titulo: 'Clareamento Dental',
+      ativa: true,
+      preco: 800.0,
+      duracaoMinutos: 60,
+    },
+    {
+      titulo: 'Restauracao de Resina',
+      ativa: true,
+      preco: 250.0,
+      duracaoMinutos: 50,
+    },
+    {
+      titulo: 'Tratamento de Canal',
+      ativa: true,
+      preco: 1200.0,
+      duracaoMinutos: 90,
+    },
+  ].filter((p) => !titulosExistentes.has(p.titulo));
+
+  if (procedimentosParaCriar.length > 0) {
+    await prisma.procedimento.createMany({
+      data: procedimentosParaCriar,
+    });
+  }
 
   // Senha padrao para ambiente de desenvolvimento.
   // Trocar antes de subir para producao.
