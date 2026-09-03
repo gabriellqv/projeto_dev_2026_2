@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAuth } from '../contexts/AuthContext.js';
+import { useAuth } from '../contexts/AuthContext';
 
 // Componente que protege rotas administrativas exigindo autenticacao.
 // Redireciona para o login caso o usuario nao esteja autenticado.

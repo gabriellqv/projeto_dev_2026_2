@@ -1,4 +1,4 @@
-import { api } from './api.js';
+import { api } from './api';
 
 // Servico de API para as operacoes administrativas protegidas por JWT.
 

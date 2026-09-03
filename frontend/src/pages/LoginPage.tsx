@@ -1,11 +1,11 @@
 import { useState, type SyntheticEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { ThemeToggle } from '../components/ThemeToggle.js';
-import { Alert } from '../components/ui/Alert.js';
-import { Button } from '../components/ui/Button.js';
-import { Input } from '../components/ui/Input.js';
-import { useAuth } from '../contexts/AuthContext.js';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { Alert } from '../components/ui/Alert';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { useAuth } from '../contexts/AuthContext';
 
 // Página de login do painel administrativo.
 
