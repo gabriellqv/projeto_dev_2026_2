@@ -1,7 +1,11 @@
+import { useState } from 'react';
+
 import { cn } from '../../lib/cn';
 
-interface AvatarProps {
+export interface AvatarProps {
   name: string;
+  src?: string;
+  alt?: string;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -15,7 +19,9 @@ const CORES_AVATAR = [
   'bg-rose-500 text-white dark:bg-rose-600',
 ];
 
-export function Avatar({ name, size = 'md', className }: AvatarProps): React.ReactNode {
+export function Avatar({ name, src, alt, size = 'md', className }: AvatarProps): React.ReactNode {
+  const [imagemErro, setImagemErro] = useState(false);
+
   const partes = name.trim().split(/\s+/);
   const iniciais =
     partes.length === 1
@@ -28,15 +34,38 @@ export function Avatar({ name, size = 'md', className }: AvatarProps): React.Rea
   }
   const cor = CORES_AVATAR[Math.abs(hash) % CORES_AVATAR.length];
 
+  const tamanhoClasses = {
+    'h-8 w-8 text-[10px]': size === 'sm',
+    'h-10 w-10 text-xs': size === 'md',
+    'h-14 w-14 text-base': size === 'lg',
+  };
+
+  if (src && !imagemErro) {
+    return (
+      <div
+        className={cn(
+          'relative shrink-0 overflow-hidden rounded-full border-2 border-surface shadow-sm ring-1 ring-border-subtle',
+          tamanhoClasses,
+          className,
+        )}
+      >
+        <img
+          src={src}
+          alt={alt || name}
+          className="h-full w-full object-cover"
+          onError={() => {
+            setImagemErro(true);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn(
-        'flex shrink-0 items-center justify-center rounded-2xl font-black shadow-sm',
-        {
-          'h-8 w-8 text-[10px]': size === 'sm',
-          'h-10 w-10 text-xs': size === 'md',
-          'h-14 w-14 text-base': size === 'lg',
-        },
+        'flex shrink-0 items-center justify-center rounded-full font-black shadow-sm select-none',
+        tamanhoClasses,
         cor,
         className,
       )}

@@ -319,7 +319,12 @@ export function TestimonialsSection(): React.ReactNode {
 
                   {/* Autor com Foto Real */}
                   <div className="mt-6 flex items-center gap-3.5 border-t border-subtle pt-4">
-                    <Avatar name={depoimento.nome} size="md" className="rounded-full" />
+                    <Avatar
+                      name={depoimento.nome}
+                      src={depoimento.foto}
+                      alt={depoimento.nome}
+                      size="md"
+                    />
                     <div>
                       <h4 className="font-bold text-primary text-sm">{depoimento.nome}</h4>
                       <p className="text-[11px] font-medium text-accent">
