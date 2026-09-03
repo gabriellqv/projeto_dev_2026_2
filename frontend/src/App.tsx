@@ -1,19 +1,17 @@
+import { Route, Routes } from 'react-router-dom';
+
+import { ConfirmationPage } from './pages/ConfirmationPage.js';
+import { HomePage } from './pages/HomePage.js';
+
 /**
- * Componente raiz da aplicação.
- *
- * Inicialmente renderiza um placeholder enquanto as rotas e páginas
- * são implementadas nas próximas tarefas.
+ * Componente raiz da aplicacao.
+ * Define as rotas publicas da pagina inicial e confirmacao.
  */
 export function App() {
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-primary-600">Sorriso Mineiro</h1>
-          <p className="mt-1 text-sm font-medium text-primary-500">OdontoAgenda</p>
-          <p className="mt-2 text-slate-600">Sistema de agendamentos da clínica</p>
-        </div>
-      </div>
-    </main>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/confirmacao" element={<ConfirmationPage />} />
+    </Routes>
   );
 }
