@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Schemas de validacao do formulario publico de agendamento.
-// Garante que os dados estejam no formato esperado antes do envio a API.
+// Schemas de validação do formulário público de agendamento.
+// Garante que os dados estejam no formato esperado antes do envio à API.
 
 const dataAtual = new Date();
 const hoje = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), dataAtual.getDate());
@@ -10,28 +10,28 @@ export const agendamentoSchema = z.object({
   nome: z
     .string()
     .min(2, 'O nome deve ter pelo menos 2 caracteres')
-    .max(100, 'O nome deve ter no maximo 100 caracteres'),
-  email: z.string().email('Informe um e-mail valido').max(100, 'E-mail muito longo'),
+    .max(100, 'O nome deve ter no máximo 100 caracteres'),
+  email: z.string().email('Informe um e-mail válido').max(100, 'E-mail muito longo'),
   telefone: z
     .string()
-    .regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Informe um telefone valido com DDD e 9 digitos')
+    .regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Informe um telefone válido com DDD e 9 dígitos')
     .optional()
     .or(z.literal('')),
   data: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Informe uma data valida')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Informe uma data válida')
     .refine((valor) => {
       const data = new Date(valor);
       return !Number.isNaN(data.getTime()) && data >= hoje;
     }, 'A data deve ser hoje ou uma data futura'),
-  horario: z.string().regex(/^([01]?\d|2[0-3]):([0-5]\d)$/, 'Informe um horario valido'),
-  observacao: z.string().max(500, 'A observacao deve ter no maximo 500 caracteres').optional(),
+  horario: z.string().regex(/^([01]?\d|2[0-3]):([0-5]\d)$/, 'Informe um horário válido'),
+  observacao: z.string().max(500, 'A observação deve ter no máximo 500 caracteres').optional(),
   procedimentoId: z.string().uuid('Selecione um procedimento'),
 });
 
 export type AgendamentoFormData = z.infer<typeof agendamentoSchema>;
 
-// Helpers para formatacao e validacao de campos do formulario.
+// Helpers para formatação e validação de campos do formulário.
 export const formatarTelefone = (valor: string): string => {
   const numeros = valor.replace(/\D/g, '').slice(0, 11);
 

@@ -5,14 +5,15 @@ import { describe, expect, it } from 'vitest';
 import { App } from './App';
 
 describe('App', () => {
-  it('deve renderizar a pagina inicial com a identidade da clinica', () => {
+  it('deve renderizar a página inicial com a identidade da clínica', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('OdontoAgenda')).toBeInTheDocument();
-    expect(screen.getByText('Seu sorriso em boas maos')).toBeInTheDocument();
+    expect(screen.getAllByText('Sorriso Mineiro').length).toBeGreaterThan(0);
+    expect(screen.getByText('Clínica Odontológica Especializada')).toBeInTheDocument();
+    expect(screen.getByText(/O cuidado que o seu sorriso merece/i)).toBeInTheDocument();
   });
 });
