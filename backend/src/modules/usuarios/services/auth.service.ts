@@ -56,6 +56,16 @@ export class AuthService {
     return { usuario, token };
   }
 
+  async obterUsuarioPorId(id: string): Promise<Usuario> {
+    const usuario = await this.usuarioRepository.buscarPorId(id);
+
+    if (!usuario) {
+      throw new AppError('Usuario nao encontrado', 401);
+    }
+
+    return usuario;
+  }
+
   async obterUsuarioPorToken(token: string): Promise<Usuario> {
     if (!this.authConfig.secret || this.authConfig.secret.length < 32) {
       throw new AppError('JWT_SECRET nao configurado', 500);
@@ -69,13 +79,7 @@ export class AuthService {
       throw new AppError('Token invalido ou expirado', 401);
     }
 
-    const usuario = await this.usuarioRepository.buscarPorId(payload.id);
-
-    if (!usuario) {
-      throw new AppError('Usuario nao encontrado', 401);
-    }
-
-    return usuario;
+    return this.obterUsuarioPorId(payload.id);
   }
 
   private gerarToken(payload: AuthPayload): string {

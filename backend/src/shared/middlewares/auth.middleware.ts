@@ -1,14 +1,17 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { z } from 'zod';
 
-// Payload esperado no token JWT.
+// Esquema de validação do payload esperado no token JWT.
+
+const jwtPayloadSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  admin: z.boolean(),
+});
 
 export interface AuthRequest extends Request {
-  usuario?: {
-    id: string;
-    email: string;
-    admin: boolean;
-  };
+  usuario?: z.infer<typeof jwtPayloadSchema>;
 }
 
 // Middleware de autenticação JWT.
@@ -42,9 +45,10 @@ export function autenticar(): RequestHandler {
     }
 
     try {
-      const decoded = jwt.verify(token, secret) as { id: string; email: string; admin: boolean };
+      const decoded = jwt.verify(token, secret);
+      const usuarioValidado = jwtPayloadSchema.parse(decoded);
 
-      request.usuario = decoded;
+      request.usuario = usuarioValidado;
       next();
     } catch {
       response.status(401).json({ message: 'Token invalido ou expirado' });
