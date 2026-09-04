@@ -3,7 +3,11 @@ import { randomUUID } from 'node:crypto';
 import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/client';
 
 import { AppError } from '../../../../shared/errors/app-error.js';
-import type { AgendamentoData, AgendamentoRepository } from '../../agendamento.repository.js';
+import type {
+  AgendamentoData,
+  AgendamentoRepository,
+  ContagemPorStatus,
+} from '../../agendamento.repository.js';
 
 // Repositorio in-memory para testes unitarios de agendamentos.
 // Simula o banco em memoria RAM sem tocar no PostgreSQL.
@@ -51,6 +55,16 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
     }
 
     return resultado.length;
+  }
+
+  async contarPorStatus(): Promise<ContagemPorStatus> {
+    return {
+      total: this.agendamentos.length,
+      pendentes: this.agendamentos.filter((a) => a.status === 'PENDENTE').length,
+      confirmados: this.agendamentos.filter((a) => a.status === 'CONFIRMADO').length,
+      cancelados: this.agendamentos.filter((a) => a.status === 'CANCELADO').length,
+      atendidos: this.agendamentos.filter((a) => a.status === 'ATENDIDO').length,
+    };
   }
 
   async buscarPorId(id: string): Promise<(Agendamento & { historico: HistoricoStatus[] }) | null> {

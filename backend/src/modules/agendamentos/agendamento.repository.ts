@@ -3,6 +3,15 @@ import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/cl
 // Reexporta os tipos para facilitar o uso em outros modulos.
 export type { Agendamento, HistoricoStatus, StatusAgendamento };
 
+// Resultado da contagem agregada de agendamentos por status.
+export interface ContagemPorStatus {
+  total: number;
+  pendentes: number;
+  confirmados: number;
+  cancelados: number;
+  atendidos: number;
+}
+
 // Interface do repositorio de agendamentos.
 // Separa a logica de persistencia da logica de negocio.
 
@@ -14,6 +23,7 @@ export interface AgendamentoRepository {
     limite: number;
   }): Promise<Agendamento[]>;
   contar(params: { status?: StatusAgendamento; busca?: string }): Promise<number>;
+  contarPorStatus(): Promise<ContagemPorStatus>;
   buscarPorId(id: string): Promise<AgendamentoComHistorico | null>;
   existeAgendamento(email: string, data: Date, horario: string): Promise<boolean>;
   criar(dados: AgendamentoData): Promise<Agendamento>;

@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
+import { toProcedimentoDto } from '../../../shared/dtos/index.js';
 import type { ProcedimentoService } from '../services/procedimento.service.js';
 
 // Controller administrativo de procedimentos.
@@ -12,13 +13,13 @@ export class ProcedimentoAdminController {
   listarTodos: RequestHandler = async (_request: Request, response: Response): Promise<void> => {
     const procedimentos = await this.procedimentoService.listarTodos();
 
-    response.json(procedimentos);
+    response.json(procedimentos.map(toProcedimentoDto));
   };
 
   criar: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const procedimento = await this.procedimentoService.criar(request.body);
 
-    response.status(201).json(procedimento);
+    response.status(201).json(toProcedimentoDto(procedimento));
   };
 
   atualizar: RequestHandler = async (request: Request, response: Response): Promise<void> => {
@@ -27,12 +28,12 @@ export class ProcedimentoAdminController {
       request.body,
     );
 
-    response.json(procedimento);
+    response.json(toProcedimentoDto(procedimento));
   };
 
   desativar: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const procedimento = await this.procedimentoService.desativar(String(request.params.id));
 
-    response.json(procedimento);
+    response.json(toProcedimentoDto(procedimento));
   };
 }

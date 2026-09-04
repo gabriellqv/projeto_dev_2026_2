@@ -7,6 +7,7 @@ import type {
   AgendamentoComHistorico,
   AgendamentoData,
   AgendamentoRepository,
+  ContagemPorStatus,
 } from './agendamento.repository.js';
 
 // Implementação do repositório de agendamentos com Prisma.
@@ -34,6 +35,26 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
     return prisma.agendamento.count({
       where: this.montarWhere(params.status, params.busca),
     });
+  }
+
+  async contarPorStatus(): Promise<ContagemPorStatus> {
+    const [total, porStatus] = await Promise.all([
+      prisma.agendamento.count(),
+      prisma.agendamento.groupBy({
+        by: ['status'],
+        _count: { status: true },
+      }),
+    ]);
+
+    const mapa = new Map(porStatus.map((item) => [item.status, item._count.status]));
+
+    return {
+      total,
+      pendentes: mapa.get('PENDENTE') ?? 0,
+      confirmados: mapa.get('CONFIRMADO') ?? 0,
+      cancelados: mapa.get('CANCELADO') ?? 0,
+      atendidos: mapa.get('ATENDIDO') ?? 0,
+    };
   }
 
   async buscarPorId(id: string): Promise<AgendamentoComHistorico | null> {

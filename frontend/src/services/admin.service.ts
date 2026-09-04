@@ -40,6 +40,14 @@ export interface ListagemAgendamentos {
   total: number;
 }
 
+export interface ContagemAgendamentos {
+  total: number;
+  pendentes: number;
+  confirmados: number;
+  cancelados: number;
+  atendidos: number;
+}
+
 export type StatusAgendamento = 'PENDENTE' | 'CONFIRMADO' | 'CANCELADO' | 'ATENDIDO';
 
 export const adminApi = {
@@ -50,6 +58,11 @@ export const adminApi = {
     limite: number;
   }): Promise<ListagemAgendamentos> {
     const response = await api.get<ListagemAgendamentos>('/admin/agendamentos', { params });
+    return response.data;
+  },
+
+  async contarAgendamentosPorStatus(): Promise<ContagemAgendamentos> {
+    const response = await api.get<ContagemAgendamentos>('/admin/agendamentos/contagem');
     return response.data;
   },
 
