@@ -1,11 +1,12 @@
 import type { NextFunction, Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
 
+import { logger } from '../src/config/logger.js';
 import { AppError } from '../src/shared/errors/app-error.js';
 import { errorHandler } from '../src/shared/middlewares/error.middleware.js';
 
-// Testes unitarios do middleware central de erros.
-// Validam que AppError retorna o status correto e erros inesperados retornam 500.
+// Testes unitários do middleware central de erros.
+// Validam que AppError retorna o status correto e erros inesperados retornam 500 com log no Pino.
 
 interface ResponseFake extends Response {
   statusCode: number;
@@ -50,15 +51,16 @@ describe('errorHandler', () => {
     expect(response.jsonPayload).toEqual({ message: 'Dados invalidos' });
   });
 
-  it('deve retornar 500 para erros inesperados', () => {
+  it('deve retornar 500 para erros inesperados e registrar no logger', () => {
     const response = criarResponseFake();
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const loggerErrorSpy = vi.spyOn(logger, 'error').mockImplementation(() => logger);
 
     errorHandler(new Error('Erro desconhecido'), {} as Request, response, {} as NextFunction);
 
     expect(response.statusCode).toBe(500);
     expect(response.jsonPayload).toEqual({ message: 'Erro interno no servidor' });
+    expect(loggerErrorSpy).toHaveBeenCalled();
 
-    consoleErrorSpy.mockRestore();
+    loggerErrorSpy.mockRestore();
   });
 });

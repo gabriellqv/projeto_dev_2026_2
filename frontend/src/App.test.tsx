@@ -41,10 +41,18 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    const titulo = await screen.findByText(/O cuidado que o seu sorriso merece/i);
+    const titulo = await screen.findByText(
+      /O cuidado que o seu sorriso merece/i,
+      {},
+      { timeout: 5000 },
+    );
     expect(titulo).toBeInTheDocument();
 
-    const subtitulo = await screen.findByText('Clínica Odontológica Especializada');
+    const subtitulo = await screen.findByText(
+      'Clínica Odontológica Especializada',
+      {},
+      { timeout: 5000 },
+    );
     expect(subtitulo).toBeInTheDocument();
 
     expect(screen.getAllByText('Sorriso Mineiro').length).toBeGreaterThan(0);

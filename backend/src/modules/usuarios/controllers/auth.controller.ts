@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
+import type { AuthRequest } from '../../../shared/middlewares/auth.middleware.js';
 import type { AuthService } from '../services/auth.service.js';
 
 // Controller público de autenticação.
@@ -27,24 +28,15 @@ export class AuthController {
   };
 
   me: RequestHandler = async (request: Request, response: Response): Promise<void> => {
-    const cookieToken = request.cookies.token as string | undefined;
-    const authHeader = request.headers.authorization;
+    const authRequest = request as AuthRequest;
 
-    let token: string | undefined;
-
-    if (cookieToken) {
-      token = cookieToken;
-    } else if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    }
-
-    if (!token) {
+    if (!authRequest.usuario) {
       response.status(401).json({ message: 'Token de autenticacao nao informado' });
 
       return;
     }
 
-    const usuario = await this.authService.obterUsuarioPorToken(token);
+    const usuario = await this.authService.obterUsuarioPorId(authRequest.usuario.id);
 
     response.json({
       usuario: this.serializarUsuario(usuario),
