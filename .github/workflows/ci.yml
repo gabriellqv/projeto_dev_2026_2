@@ -34,6 +34,7 @@ jobs:
       DATABASE_URL: postgresql://odontoagenda:odontoagenda@localhost:5432/odontoagenda_test?schema=public
       JWT_SECRET: chave-secreta-de-teste-ci-minimo-32-caracteres
       ADMIN_PASSWORD: senha-admin-teste-ci-123
+      VITE_API_URL: http://localhost:3000/api
       NODE_ENV: test
 
     steps:
