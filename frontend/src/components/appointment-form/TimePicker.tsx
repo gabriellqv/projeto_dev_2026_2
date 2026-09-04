@@ -166,6 +166,7 @@ export function TimePicker({
                     <button
                       key={h}
                       type="button"
+                      aria-selected={selecionado}
                       onClick={() => {
                         onChange(h);
                         onToggle(false);
@@ -210,6 +211,7 @@ export function TimePicker({
                     <button
                       key={h}
                       type="button"
+                      aria-selected={selecionado}
                       onClick={() => {
                         onChange(h);
                         onToggle(false);

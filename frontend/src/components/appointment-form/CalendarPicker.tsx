@@ -215,9 +215,13 @@ export function CalendarPicker({
           </div>
 
           {/* Matriz dos Dias */}
-          <div className="grid grid-cols-7 gap-1 text-center text-xs">
+          <div
+            className="grid grid-cols-7 gap-1 text-center text-xs"
+            role="grid"
+            aria-label="Dias do mês"
+          >
             {Array.from({ length: primeiroDiaSemana }).map((_, i) => (
-              <span key={`vazio-${String(i)}`} />
+              <span key={`vazio-${String(i)}`} aria-hidden="true" />
             ))}
 
             {Array.from({ length: totalDiasMes }).map((_, i) => {
@@ -239,7 +243,9 @@ export function CalendarPicker({
                   key={dataIso}
                   type="button"
                   disabled={desabilitadoDia}
-                  aria-label={`${String(numeroDia)} de ${MESES[mesAtual]} de ${String(anoAtual)}${eHoje ? ', hoje' : ''}${desabilitadoDia ? ', indisponível' : ''}`}
+                  aria-selected={selecionado}
+                  aria-current={eHoje ? 'date' : undefined}
+                  aria-label={`${String(numeroDia)} de ${MESES[mesAtual]} de ${String(anoAtual)}${eHoje ? ', hoje' : ''}${desabilitadoDia ? ', indisponível' : ''}${selecionado ? ', selecionado' : ''}`}
                   onClick={() => {
                     onChange(dataIso);
                     onToggle(false);
