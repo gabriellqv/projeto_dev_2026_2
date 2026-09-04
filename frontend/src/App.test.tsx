@@ -57,4 +57,32 @@ describe('App', () => {
 
     expect(screen.getAllByText('Sorriso Mineiro').length).toBeGreaterThan(0);
   });
+
+  it('deve renderizar a tela de login ao acessar a rota /admin/login', async () => {
+    render(
+      <MemoryRouter initialEntries={['/admin/login']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    const heading = await screen.findByRole(
+      'heading',
+      { name: /Painel Administrativo/i },
+      { timeout: 5000 },
+    );
+    expect(heading).toBeInTheDocument();
+    expect(screen.getByLabelText(/E-mail de Acesso/i)).toBeInTheDocument();
+  });
+
+  it('deve renderizar a tela de não encontrado ao acessar rota inexistente', async () => {
+    render(
+      <MemoryRouter initialEntries={['/rota-que-nao-existe']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    const heading404 = await screen.findByText(/404/i, {}, { timeout: 5000 });
+    expect(heading404).toBeInTheDocument();
+    expect(screen.getByText(/Página Não Encontrada/i)).toBeInTheDocument();
+  });
 });
