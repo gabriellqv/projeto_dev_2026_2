@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import type { Agendamento, HistoricoStatus, StatusAgendamento } from '@prisma/client';
 
+import { AppError } from '../../../../shared/errors/app-error.js';
 import type { AgendamentoData, AgendamentoRepository } from '../../agendamento.repository.js';
 
 // Repositorio in-memory para testes unitarios de agendamentos.
@@ -74,6 +75,17 @@ export class InMemoryAgendamentoRepository implements AgendamentoRepository {
   }
 
   async criar(dados: AgendamentoData): Promise<Agendamento> {
+    const jaExiste = this.agendamentos.some(
+      (a) =>
+        a.email.toLowerCase() === dados.email.toLowerCase() &&
+        a.data.getTime() === dados.data.getTime() &&
+        a.horario === dados.horario,
+    );
+
+    if (jaExiste) {
+      throw new AppError('Ja existe um agendamento para este email no mesmo horario', 409);
+    }
+
     const agendamento: Agendamento = {
       ...dados,
       id: randomUUID(),

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 import { InMemoryAgendamentoRepository } from '../src/modules/agendamentos/repositories/in-memory/agendamento.repository.in-memory.js';
 import { AgendamentoService } from '../src/modules/agendamentos/services/agendamento.service.js';
@@ -82,6 +82,28 @@ describe('AgendamentoService', () => {
         procedimentoId: procedimento.id,
       }),
     ).rejects.toThrow('Ja existe um agendamento para este email no mesmo horario');
+  });
+
+  it('deve propagar erro 409 caso ocorra race condition no repositorio', async () => {
+    const procedimento = await criarProcedimentoAtivo();
+
+    // Simula race condition onde a checagem previa passa, mas o repositorio lanca 409
+    vi.spyOn(agendamentoRepository, 'existeAgendamento').mockResolvedValueOnce(false);
+    vi.spyOn(agendamentoRepository, 'criar').mockRejectedValueOnce(
+      new AppError('Ja existe um agendamento para este email no mesmo horario', 409),
+    );
+
+    await expect(
+      service.criar({
+        nome: 'Maria Outra',
+        email: 'maria@email.com',
+        data: new Date('2026-10-10'),
+        horario: '14:00',
+        procedimentoId: procedimento.id,
+      }),
+    ).rejects.toThrow(
+      new AppError('Ja existe um agendamento para este email no mesmo horario', 409),
+    );
   });
 
   it('deve confirmar e depois atender um agendamento', async () => {
