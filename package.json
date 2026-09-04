@@ -29,5 +29,11 @@
   "engines": {
     "node": ">=22.0.0",
     "npm": ">=10.0.0"
+  },
+  "overrides": {
+    "body-parser": "1.20.6",
+    "qs": "^6.16.0",
+    "minimatch": "10.2.6",
+    "deepmerge-ts": "8.0.2"
   }
 }
