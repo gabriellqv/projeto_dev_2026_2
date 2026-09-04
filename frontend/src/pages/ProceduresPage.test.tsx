@@ -20,12 +20,9 @@ vi.mock('../services/admin.service', () => ({
 
 vi.mock('../services/auth.service', () => ({
   authService: {
-    getToken: vi.fn(),
     me: vi.fn(),
-    isAuthenticated: vi.fn(),
     logout: vi.fn(),
   },
-  setAuthHeader: vi.fn(),
 }));
 
 const mockProcedimentos = [
@@ -48,14 +45,12 @@ const mockProcedimentos = [
 describe('ProceduresPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(authService.getToken).mockReturnValue('fake-token');
     vi.mocked(authService.me).mockResolvedValue({
       id: 'admin-1',
       nome: 'Dra. Beatriz Santos',
       email: 'admin@sorrisomineiro.com.br',
       admin: true,
     });
-    vi.mocked(authService.isAuthenticated).mockReturnValue(true);
     vi.mocked(adminApi.listarProcedimentos).mockResolvedValue(mockProcedimentos);
   });
 

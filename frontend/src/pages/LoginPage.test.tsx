@@ -12,18 +12,14 @@ vi.mock('../services/auth.service', () => ({
   authService: {
     login: vi.fn(),
     me: vi.fn(),
-    getToken: vi.fn(),
     logout: vi.fn(),
-    isAuthenticated: vi.fn(),
   },
-  setAuthHeader: vi.fn(),
 }));
 
 describe('LoginPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(authService.getToken).mockReturnValue(null);
-    vi.mocked(authService.isAuthenticated).mockReturnValue(false);
+    vi.mocked(authService.me).mockRejectedValue(new Error('Não autenticado'));
   });
 
   it('deve renderizar os campos de email e senha e o botão de acesso', () => {
@@ -73,13 +69,10 @@ describe('LoginPage', () => {
   it('deve chamar o authService.login com as credenciais corretas', async () => {
     const loginSpy = vi.spyOn(authService, 'login');
     loginSpy.mockResolvedValue({
-      token: 'jwt-fake-token',
-      usuario: {
-        id: 'user-1',
-        email: 'admin@sorrisomineiro.com.br',
-        nome: 'Administrador',
-        admin: true,
-      },
+      id: 'user-1',
+      email: 'admin@sorrisomineiro.com.br',
+      nome: 'Administrador',
+      admin: true,
     });
 
     render(

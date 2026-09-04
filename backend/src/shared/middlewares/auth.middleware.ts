@@ -11,20 +11,28 @@ export interface AuthRequest extends Request {
   };
 }
 
-// Middleware de autenticacao JWT.
-// Protege rotas administrativas verificando o header Authorization.
+// Middleware de autenticação JWT.
+// Protege rotas administrativas verificando o cookie httpOnly ou o header Authorization.
 
 export function autenticar(): RequestHandler {
   return (request: AuthRequest, response: Response, next: NextFunction): void => {
+    const cookieToken = request.cookies.token as string | undefined;
     const authHeader = request.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    let token: string | undefined;
+
+    if (cookieToken) {
+      token = cookieToken;
+    } else if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+
+    if (!token) {
       response.status(401).json({ message: 'Token de autenticacao nao informado' });
 
       return;
     }
 
-    const token = authHeader.split(' ')[1];
     const secret = process.env.JWT_SECRET;
 
     if (!secret || secret.length < 32) {

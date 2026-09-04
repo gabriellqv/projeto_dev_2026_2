@@ -14,3 +14,4 @@ export const authRouter = Router();
 
 authRouter.post('/login', authLimiter, asyncHandler(authController.login));
 authRouter.get('/me', autenticar(), asyncHandler(authController.me));
+authRouter.post('/logout', asyncHandler(authController.logout));

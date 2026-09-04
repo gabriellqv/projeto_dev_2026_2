@@ -179,4 +179,34 @@ describe('Rotas HTTP', () => {
       expect(atualizado.body.titulo).toBe('Procedimento Atualizado');
     });
   });
+
+  describe('Autenticação e Sessão com Cookies httpOnly', () => {
+    it('deve realizar login definindo cookie httpOnly e recuperar sessao via cookie', async () => {
+      const loginRes = await request(app).post('/api/auth/login').send({
+        email: ADMIN_EMAIL,
+        senha: ADMIN_SENHA,
+      });
+
+      expect(loginRes.status).toBe(200);
+      expect(loginRes.body.usuario.email).toBe(ADMIN_EMAIL);
+      expect(loginRes.headers['set-cookie']).toBeDefined();
+
+      const cookies = loginRes.headers['set-cookie'] as unknown as string[];
+      const cookieToken = cookies.find((c) => c.startsWith('token='));
+      expect(cookieToken).toBeDefined();
+      expect(cookieToken).toContain('HttpOnly');
+
+      // Testa recuperacao de usuario logado enviando o cookie
+      const meRes = await request(app)
+        .get('/api/auth/me')
+        .set('Cookie', [cookieToken ?? '']);
+      expect(meRes.status).toBe(200);
+      expect(meRes.body.usuario.email).toBe(ADMIN_EMAIL);
+
+      // Testa logout limpando cookie
+      const logoutRes = await request(app).post('/api/auth/logout');
+      expect(logoutRes.status).toBe(200);
+      expect(logoutRes.headers['set-cookie']).toBeDefined();
+    });
+  });
 });

@@ -2,10 +2,9 @@ import type { Request, RequestHandler, Response } from 'express';
 
 import type { AuthService } from '../services/auth.service.js';
 
-// Controller publico de autenticacao.
-// Recebe email e senha, delega a validacao para o AuthService e retorna o token JWT.
-// Tambem permite recuperar a sessao ativa a partir de um token valido.
-// Erros de dominio sao tratados pelo middleware global de erros.
+// Controller público de autenticação.
+// Recebe email e senha, delega a validação para o AuthService e define o cookie httpOnly.
+// Permite recuperar a sessão ativa e realizar logout com limpeza de cookies.
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -13,27 +12,54 @@ export class AuthController {
   login: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const { usuario, token } = await this.authService.login(request.body);
 
-    response.json({
-      usuario: this.serializarUsuario(usuario),
-      token,
-    });
+    response
+      .cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({
+        usuario: this.serializarUsuario(usuario),
+        token,
+      });
   };
 
   me: RequestHandler = async (request: Request, response: Response): Promise<void> => {
+    const cookieToken = request.cookies.token as string | undefined;
     const authHeader = request.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    let token: string | undefined;
+
+    if (cookieToken) {
+      token = cookieToken;
+    } else if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
+
+    if (!token) {
       response.status(401).json({ message: 'Token de autenticacao nao informado' });
 
       return;
     }
 
-    const token = authHeader.split(' ')[1];
     const usuario = await this.authService.obterUsuarioPorToken(token);
 
     response.json({
       usuario: this.serializarUsuario(usuario),
     });
+  };
+
+  logout: RequestHandler = async (_request: Request, response: Response): Promise<void> => {
+    response
+      .clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      })
+      .status(200)
+      .json({ message: 'Logout realizado com sucesso' });
   };
 
   private serializarUsuario(usuario: { id: string; email: string; nome: string; admin: boolean }): {

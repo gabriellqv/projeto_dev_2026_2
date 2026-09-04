@@ -1,9 +1,7 @@
 import { api } from './api';
 
-// Servico de autenticacao do painel administrativo.
-// Armazena o token JWT no localStorage para persistencia entre recarregamentos.
-
-const STORAGE_KEY = 'odontoagenda_token';
+// Serviço de autenticação do painel administrativo.
+// A autenticação é baseada em cookie httpOnly gerenciado pelo backend.
 
 export interface Usuario {
   id: string;
@@ -18,15 +16,14 @@ export interface LoginInput {
 }
 
 export interface LoginResponse {
-  token: string;
   usuario: Usuario;
+  token?: string;
 }
 
 export const authService = {
-  async login(dados: LoginInput): Promise<LoginResponse> {
+  async login(dados: LoginInput): Promise<Usuario> {
     const response = await api.post<LoginResponse>('/auth/login', dados);
-    localStorage.setItem(STORAGE_KEY, response.data.token);
-    return response.data;
+    return response.data.usuario;
   },
 
   async me(): Promise<Usuario> {
@@ -34,23 +31,7 @@ export const authService = {
     return response.data.usuario;
   },
 
-  getToken(): string | null {
-    return localStorage.getItem(STORAGE_KEY);
-  },
-
-  logout(): void {
-    localStorage.removeItem(STORAGE_KEY);
-  },
-
-  isAuthenticated(): boolean {
-    return this.getToken() !== null;
+  async logout(): Promise<void> {
+    await api.post('/auth/logout');
   },
 };
-
-export function setAuthHeader(token: string | null): void {
-  if (token) {
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common.Authorization;
-  }
-}

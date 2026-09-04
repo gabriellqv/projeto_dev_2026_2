@@ -29,9 +29,9 @@ export function AdminLayout({
   const { usuario, logout } = useAuth();
   const { resolvedTheme, toggleTheme } = useTheme();
 
-  const handleLogout = (): void => {
-    logout();
-    void navigate('/admin/login');
+  const handleLogout = async (): Promise<void> => {
+    await logout();
+    await navigate('/admin/login');
   };
 
   const navItems = [
@@ -319,7 +319,9 @@ export function AdminLayout({
               variant="danger"
               size="sm"
               className="justify-center"
-              onClick={handleLogout}
+              onClick={() => {
+                void handleLogout();
+              }}
             >
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
