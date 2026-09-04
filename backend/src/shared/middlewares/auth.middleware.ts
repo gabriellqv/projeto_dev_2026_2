@@ -27,7 +27,7 @@ export function autenticar(): RequestHandler {
     const token = authHeader.split(' ')[1];
     const secret = process.env.JWT_SECRET;
 
-    if (!secret) {
+    if (!secret || secret.length < 32) {
       response.status(500).json({ message: 'JWT_SECRET nao configurado' });
 
       return;

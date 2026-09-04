@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    env: {
+      JWT_SECRET: 'chave-secreta-de-teste-com-pelo-menos-32-caracteres',
+    },
     include: ['tests/**/*.integration.spec.ts'],
     setupFiles: ['tests/integration/setup.ts'],
     fileParallelism: false,

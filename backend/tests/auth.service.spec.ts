@@ -104,4 +104,17 @@ describe('AuthService', () => {
       serviceSemSegredo.login({ email: 'teste@email.com', senha: 'senha123' }),
     ).rejects.toThrow(new AppError('JWT_SECRET nao configurado', 500));
   });
+
+  it('deve lancar erro se o segredo JWT tiver menos de 32 caracteres', async () => {
+    await criarUsuario('teste@email.com', 'senha123');
+
+    const serviceSegredoCurto = new AuthService(usuarioRepository, {
+      secret: 'curto-menor-que-32-chars',
+      expiresIn: '1h',
+    });
+
+    await expect(
+      serviceSegredoCurto.login({ email: 'teste@email.com', senha: 'senha123' }),
+    ).rejects.toThrow(new AppError('JWT_SECRET nao configurado', 500));
+  });
 });
