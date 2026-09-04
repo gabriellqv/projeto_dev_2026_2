@@ -20,6 +20,7 @@ model Procedimento {
   atualizadoEm   DateTime      @updatedAt @map("atualizado_em")
   agendamentos   Agendamento[]
 
+  @@index([ativa])
   @@map("procedimentos")
 }
 
@@ -40,6 +41,9 @@ model Agendamento {
 
   @@unique([email, data, horario])
   @@index([email, data, horario])
+  @@index([status])
+  @@index([nome])
+  @@index([email])
   @@map("agendamentos")
 }
 
