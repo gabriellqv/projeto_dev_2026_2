@@ -8,7 +8,7 @@ import { prisma } from '../../src/shared/database/prisma.js';
 // Usam supertest para bater nos endpoints sem subir o servidor.
 
 const ADMIN_EMAIL = 'admin@sorrisomineiro.com.br';
-const ADMIN_SENHA = 'admin123';
+const ADMIN_SENHA = process.env.ADMIN_PASSWORD ?? 'senha-admin-teste-123';
 
 let token: string;
 let procedimentoId: string;

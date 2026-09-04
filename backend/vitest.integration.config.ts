@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'node',
     env: {
       JWT_SECRET: 'chave-secreta-de-teste-com-pelo-menos-32-caracteres',
+      ADMIN_PASSWORD: 'senha-admin-teste-123',
     },
     include: ['tests/**/*.integration.spec.ts'],
     setupFiles: ['tests/integration/setup.ts'],

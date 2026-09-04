@@ -45,10 +45,20 @@ async function main(): Promise<void> {
   }
 
   // 2. Usuário Administrador
-  const senhaHash = bcryptjs.hashSync('admin123', 10);
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminPassword || adminPassword.length < 8) {
+    throw new Error(
+      'ADMIN_PASSWORD deve ter no mínimo 8 caracteres e estar configurado via ambiente.',
+    );
+  }
+
+  const senhaHash = bcryptjs.hashSync(adminPassword, 10);
   await prisma.usuario.upsert({
     where: { email: 'admin@sorrisomineiro.com.br' },
-    update: {},
+    update: {
+      senha: senhaHash,
+    },
     create: {
       email: 'admin@sorrisomineiro.com.br',
       nome: 'Administrador',
@@ -196,7 +206,7 @@ async function main(): Promise<void> {
   }
 
   // eslint-disable-next-line no-console
-  console.log('✅ Seed executado com sucesso: Procedimentos, Admin e 10 Agendamentos populados!');
+  console.log('Seed executado com sucesso: Procedimentos, Admin e 10 Agendamentos populados!');
 }
 
 main()
