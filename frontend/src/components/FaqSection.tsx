@@ -68,7 +68,10 @@ export function FaqSection(): React.ReactNode {
                 )}
               >
                 <button
+                  id={`faq-btn-${String(index)}`}
                   type="button"
+                  aria-expanded={isAberto}
+                  aria-controls={`faq-panel-${String(index)}`}
                   onClick={() => {
                     alternar(index);
                   }}
@@ -96,6 +99,9 @@ export function FaqSection(): React.ReactNode {
                 </button>
 
                 <div
+                  id={`faq-panel-${String(index)}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${String(index)}`}
                   className={cn(
                     'grid transition-all duration-300 ease-in-out',
                     isAberto

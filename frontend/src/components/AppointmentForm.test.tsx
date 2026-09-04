@@ -161,4 +161,25 @@ describe('AppointmentForm', () => {
     expect(chamada.data).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(chamada.horario).toBe('09:00');
   });
+
+  it('deve fechar o dropdown de procedimento ao pressionar Escape', () => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <AppointmentForm procedimentos={mockProcedimentos} onSubmit={handleSubmitMock} />
+        </ThemeProvider>
+      </BrowserRouter>,
+    );
+
+    const procBtn = screen.getByRole('button', { name: /Procedimento Desejado/i });
+    expect(procBtn).toHaveAttribute('aria-expanded', 'false');
+
+    fireEvent.click(procBtn);
+    expect(procBtn).toHaveAttribute('aria-expanded', 'true');
+
+    const listbox = screen.getByRole('listbox');
+    fireEvent.keyDown(listbox, { key: 'Escape' });
+
+    expect(procBtn).toHaveAttribute('aria-expanded', 'false');
+  });
 });

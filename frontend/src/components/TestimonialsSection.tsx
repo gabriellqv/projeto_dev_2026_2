@@ -262,6 +262,9 @@ export function TestimonialsSection(): React.ReactNode {
 
         {/* Trilho do Carrossel Infinito Bidirecional */}
         <div
+          role="region"
+          aria-roledescription="carrossel"
+          aria-label="Depoimentos de pacientes"
           className="relative overflow-hidden -mx-3 cursor-grab active:cursor-grabbing touch-pan-y"
           onTouchStart={lidarInicioToque}
           onTouchEnd={lidarFimToque}
@@ -276,66 +279,79 @@ export function TestimonialsSection(): React.ReactNode {
               transition: comTransicao ? 'transform 800ms cubic-bezier(0.25, 1, 0.5, 1)' : 'none',
             }}
           >
-            {itensEstendidos.map((depoimento, idx) => (
-              <div
-                key={`${depoimento.nome}-${String(idx)}`}
-                className="flex-shrink-0 px-3"
-                style={{ width: `${String(larguraCard)}%` }}
-              >
-                <div className="flex h-full flex-col justify-between rounded-3xl border border-subtle bg-surface p-7 shadow-card transition-all duration-300 hover:border-accent hover:shadow-lg">
-                  <div>
-                    {/* Topo do card: Estrelas Douradas e Badge Sálvia */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <div className="flex items-center gap-1 text-dourado">
-                        {Array.from({ length: depoimento.estrelas }).map((_, i) => (
-                          <svg key={String(i)} className="h-5 w-5 fill-current" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            {itensEstendidos.map((depoimento, idx) => {
+              const ehVisivel = idx >= indiceAtual && idx < indiceAtual + cardsVisiveis;
+              const numeroOriginal = (idx % totalOriginal) + 1;
+
+              return (
+                <div
+                  key={`${depoimento.nome}-${String(idx)}`}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${String(numeroOriginal)} de ${String(totalOriginal)}`}
+                  aria-hidden={!ehVisivel}
+                  className="flex-shrink-0 px-3"
+                  style={{ width: `${String(larguraCard)}%` }}
+                >
+                  <div className="flex h-full flex-col justify-between rounded-3xl border border-subtle bg-surface p-7 shadow-card transition-all duration-300 hover:border-accent hover:shadow-lg">
+                    <div>
+                      {/* Topo do card: Estrelas Douradas e Badge Sálvia */}
+                      <div className="flex items-center justify-between gap-2 mb-4">
+                        <div className="flex items-center gap-1 text-dourado">
+                          {Array.from({ length: depoimento.estrelas }).map((_, i) => (
+                            <svg
+                              key={String(i)}
+                              className="h-5 w-5 fill-current"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                          ))}
+                        </div>
+                        <Badge variant="success">
+                          <svg
+                            className="h-3 w-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2.5}
+                              d="M5 13l4 4L19 7"
+                            />
                           </svg>
-                        ))}
+                          {depoimento.tag}
+                        </Badge>
                       </div>
-                      <Badge variant="success">
-                        <svg
-                          className="h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2.5}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        {depoimento.tag}
-                      </Badge>
+
+                      {/* Comentário */}
+                      <p className="text-sm leading-relaxed text-secondary italic">
+                        &ldquo;{depoimento.comentario}&rdquo;
+                      </p>
                     </div>
 
-                    {/* Comentário */}
-                    <p className="text-sm leading-relaxed text-secondary italic">
-                      &ldquo;{depoimento.comentario}&rdquo;
-                    </p>
-                  </div>
-
-                  {/* Autor com Foto Real */}
-                  <div className="mt-6 flex items-center gap-3.5 border-t border-subtle pt-4">
-                    <Avatar
-                      name={depoimento.nome}
-                      src={depoimento.foto}
-                      alt={depoimento.nome}
-                      size="md"
-                    />
-                    <div>
-                      <h4 className="font-bold text-primary text-sm">{depoimento.nome}</h4>
-                      <p className="text-[11px] font-medium text-accent">
-                        {depoimento.procedimento} •{' '}
-                        <span className="text-muted font-normal">{depoimento.cidade}</span>
-                      </p>
+                    {/* Autor com Foto Real */}
+                    <div className="mt-6 flex items-center gap-3.5 border-t border-subtle pt-4">
+                      <Avatar
+                        name={depoimento.nome}
+                        src={depoimento.foto}
+                        alt={depoimento.nome}
+                        size="md"
+                      />
+                      <div>
+                        <h4 className="font-bold text-primary text-sm">{depoimento.nome}</h4>
+                        <p className="text-[11px] font-medium text-accent">
+                          {depoimento.procedimento} •{' '}
+                          <span className="text-muted font-normal">{depoimento.cidade}</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -345,6 +361,7 @@ export function TestimonialsSection(): React.ReactNode {
             <button
               key={index}
               type="button"
+              aria-current={indiceAtivoReal === index ? 'true' : undefined}
               onClick={() => {
                 const diferenca = index - (indiceAtual % totalOriginal);
                 setComTransicao(true);
