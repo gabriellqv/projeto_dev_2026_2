@@ -66,6 +66,39 @@ describe('AppointmentForm', () => {
     });
   });
 
+  it('deve exibir erro de validação quando data e horário não forem selecionados', async () => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <AppointmentForm
+            procedimentos={mockProcedimentos}
+            procedimentoPreSelecionadoId={UUID_LIMPEZA}
+            onSubmit={handleSubmitMock}
+          />
+        </ThemeProvider>
+      </BrowserRouter>,
+    );
+
+    fireEvent.change(screen.getByLabelText(/Nome Completo/i), {
+      target: { value: 'Carlos Drummond de Andrade' },
+    });
+    fireEvent.change(screen.getByLabelText(/E-mail para Confirmação/i), {
+      target: { value: 'carlos@exemplo.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/WhatsApp \/ Telefone/i), {
+      target: { value: '(38) 99999-8888' },
+    });
+
+    const submitBtn = screen.getByRole('button', { name: /Solicitar Agendamento/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Informe uma data válida')).toBeInTheDocument();
+      expect(screen.getByText('Informe um horário válido')).toBeInTheDocument();
+    });
+    expect(handleSubmitMock).not.toHaveBeenCalled();
+  });
+
   it('deve chamar onSubmit com os dados preenchidos quando todos os campos forem válidos', async () => {
     render(
       <BrowserRouter>
@@ -90,13 +123,42 @@ describe('AppointmentForm', () => {
       target: { value: '(38) 99999-8888' },
     });
 
-    // Submissão sem data/hora deve exibir erro de validação
+    // Abre calendário e seleciona data via atalho Hoje
+    const dataBtn = screen.getByRole('button', { name: /Data da Consulta/i });
+    fireEvent.click(dataBtn);
+
+    const hojeBtn = screen.getByRole('button', { name: /^Hoje$/i });
+    fireEvent.click(hojeBtn);
+
+    // Abre seletor de horários e escolhe 09:00
+    const horarioBtn = screen.getByRole('button', { name: /Horário Desejado/i });
+    fireEvent.click(horarioBtn);
+
+    const opcaoHorario = screen.getByRole('button', { name: '09:00' });
+    fireEvent.click(opcaoHorario);
+
+    // Submete o formulário completo
     const submitBtn = screen.getByRole('button', { name: /Solicitar Agendamento/i });
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Informe uma data válida')).toBeInTheDocument();
-      expect(screen.getByText('Informe um horário válido')).toBeInTheDocument();
+      expect(handleSubmitMock).toHaveBeenCalledTimes(1);
     });
+
+    const chamada = handleSubmitMock.mock.calls[0][0] as {
+      nome: string;
+      email: string;
+      telefone: string;
+      procedimentoId: string;
+      data: string;
+      horario: string;
+    };
+
+    expect(chamada.nome).toBe('Carlos Drummond de Andrade');
+    expect(chamada.email).toBe('carlos@exemplo.com');
+    expect(chamada.telefone).toBe('(38) 99999-8888');
+    expect(chamada.procedimentoId).toBe(UUID_LIMPEZA);
+    expect(chamada.data).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(chamada.horario).toBe('09:00');
   });
 });
