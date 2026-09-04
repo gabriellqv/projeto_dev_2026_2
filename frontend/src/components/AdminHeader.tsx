@@ -10,9 +10,9 @@ export function AdminHeader(): React.ReactNode {
   const { usuario, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = (): void => {
-    logout();
-    void navigate('/admin/login');
+  const handleLogout = async (): Promise<void> => {
+    await logout();
+    await navigate('/admin/login');
   };
 
   return (
@@ -55,7 +55,9 @@ export function AdminHeader(): React.ReactNode {
           <ThemeToggle />
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => {
+              void handleLogout();
+            }}
             className="rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-semibold text-rose-300 hover:bg-rose-500/20 hover:border-rose-500/40 hover:text-rose-200 transition-all dark:bg-[#141C1E] dark:border-[#1F2B2E]"
           >
             Sair

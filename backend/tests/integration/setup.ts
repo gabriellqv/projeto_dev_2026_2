@@ -15,11 +15,15 @@ beforeAll(() => {
     stdio: 'ignore',
   });
 
-  // Popula o admin e os procedimentos padrao para os testes.
-  // O seed e idempotente: nao duplica registros existentes.
+  // Popula o admin e os procedimentos padrão para os testes.
+  // O seed é idempotente: não duplica registros existentes.
   execSync('npx prisma db seed', {
     cwd: process.cwd(),
-    env: { ...process.env, PATH: process.env.PATH },
+    env: {
+      ...process.env,
+      PATH: process.env.PATH,
+      ADMIN_PASSWORD: process.env.ADMIN_PASSWORD ?? 'senha-admin-teste-123',
+    },
     stdio: 'ignore',
   });
 });

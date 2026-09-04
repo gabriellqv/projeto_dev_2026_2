@@ -1,6 +1,7 @@
-import type { Agendamento, Prisma, StatusAgendamento } from '@prisma/client';
+import { Prisma, type Agendamento, type StatusAgendamento } from '@prisma/client';
 
 import { prisma } from '../../shared/database/prisma.js';
+import { AppError } from '../../shared/errors/app-error.js';
 
 import type {
   AgendamentoComHistorico,
@@ -8,8 +9,8 @@ import type {
   AgendamentoRepository,
 } from './agendamento.repository.js';
 
-// Implementacao do repositorio de agendamentos com Prisma.
-// Filtros de busca e paginacao ficam centralizados aqui.
+// Implementação do repositório de agendamentos com Prisma.
+// Filtros de busca e paginação ficam centralizados aqui.
 
 export class PrismaAgendamentoRepository implements AgendamentoRepository {
   async listar(params: {
@@ -55,10 +56,18 @@ export class PrismaAgendamentoRepository implements AgendamentoRepository {
   }
 
   async criar(dados: AgendamentoData): Promise<Agendamento> {
-    return prisma.agendamento.create({
-      data: this.normalizarCamposOpcionais(dados),
-      include: { procedimento: true },
-    });
+    try {
+      return await prisma.agendamento.create({
+        data: this.normalizarCamposOpcionais(dados),
+        include: { procedimento: true },
+      });
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new AppError('Ja existe um agendamento para este email no mesmo horario', 409);
+      }
+
+      throw error;
+    }
   }
 
   private normalizarCamposOpcionais(

@@ -241,6 +241,28 @@ builder.addPath('/auth/me', {
   },
 });
 
+builder.addPath('/auth/logout', {
+  post: {
+    tags: ['Autenticacao'],
+    summary: 'Encerra a sessao do usuario limpando o cookie de autenticacao',
+    responses: {
+      '200': {
+        description: 'Logout realizado com sucesso',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                message: { type: 'string', example: 'Logout realizado com sucesso' },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+});
+
 builder.addPath('/admin/agendamentos', {
   get: {
     tags: ['Admin'],

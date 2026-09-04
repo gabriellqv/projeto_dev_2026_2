@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { authService, setAuthHeader, type Usuario } from '../services/auth.service.js';
+import { authService, type Usuario } from '../services/auth.service.js';
 
-// Contexto de autenticacao para compartilhar sessao entre as paginas administrativas.
+// Contexto de autenticação para compartilhar sessão entre as páginas administrativas.
 
 interface AuthContextValue {
   usuario: Usuario | null;
   carregando: boolean;
   login: (email: string, senha: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -22,37 +22,30 @@ export function AuthProvider({ children }: AuthProviderProps): React.ReactNode {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const token = authService.getToken();
-
-    if (token) {
-      setAuthHeader(token);
-      authService
-        .me()
-        .then((dados) => {
-          setUsuario(dados);
-        })
-        .catch(() => {
-          authService.logout();
-          setAuthHeader(null);
-        })
-        .finally(() => {
-          setCarregando(false);
-        });
-    } else {
-      setCarregando(false);
-    }
+    authService
+      .me()
+      .then((dados) => {
+        setUsuario(dados);
+      })
+      .catch(() => {
+        setUsuario(null);
+      })
+      .finally(() => {
+        setCarregando(false);
+      });
   }, []);
 
   const login = async (email: string, senha: string): Promise<void> => {
-    const { token, usuario: dadosUsuario } = await authService.login({ email, senha });
-    setAuthHeader(token);
+    const dadosUsuario = await authService.login({ email, senha });
     setUsuario(dadosUsuario);
   };
 
-  const logout = (): void => {
-    authService.logout();
-    setAuthHeader(null);
-    setUsuario(null);
+  const logout = async (): Promise<void> => {
+    try {
+      await authService.logout();
+    } finally {
+      setUsuario(null);
+    }
   };
 
   return (

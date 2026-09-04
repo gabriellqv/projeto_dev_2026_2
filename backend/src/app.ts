@@ -1,3 +1,4 @@
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import type { Application } from 'express';
 import express from 'express';
@@ -13,20 +14,20 @@ import { procedimentoPublicRouter } from './modules/procedimentos/routes/procedi
 import { authRouter } from './modules/usuarios/routes/auth.routes.js';
 import { errorHandler } from './shared/middlewares/error.middleware.js';
 
-// Aplicacao Express configurada com middlewares globais e rotas.
-// Este e o composition root do backend.
+// Aplicação Express configurada com middlewares globais e rotas.
+// Este é o composition root do backend.
 
 export const app: Application = express();
 
-// Helmet adiciona headers de seguranca basicos.
+// Helmet adiciona headers de segurança básicos.
 app.use(helmet());
 
-// CORS limitado as origens configuradas via ambiente.
-// Padrao: frontend local em desenvolvimento.
+// CORS limitado às origens configuradas via ambiente com suporte a credenciais.
 const allowedOrigins = process.env.CORS_ORIGIN?.split(',') ?? ['http://localhost:5173'];
 app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Documentacao interativa da API em /api-docs.
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

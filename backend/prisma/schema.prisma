@@ -38,6 +38,7 @@ model Agendamento {
   atualizadoEm   DateTime          @updatedAt @map("atualizado_em")
   historico      HistoricoStatus[]
 
+  @@unique([email, data, horario])
   @@index([email, data, horario])
   @@map("agendamentos")
 }

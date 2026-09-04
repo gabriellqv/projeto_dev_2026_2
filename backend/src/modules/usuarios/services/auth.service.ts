@@ -57,7 +57,7 @@ export class AuthService {
   }
 
   async obterUsuarioPorToken(token: string): Promise<Usuario> {
-    if (!this.authConfig.secret) {
+    if (!this.authConfig.secret || this.authConfig.secret.length < 32) {
       throw new AppError('JWT_SECRET nao configurado', 500);
     }
 
@@ -79,7 +79,7 @@ export class AuthService {
   }
 
   private gerarToken(payload: AuthPayload): string {
-    if (!this.authConfig.secret) {
+    if (!this.authConfig.secret || this.authConfig.secret.length < 32) {
       throw new AppError('JWT_SECRET nao configurado', 500);
     }
 
