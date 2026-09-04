@@ -19,23 +19,25 @@ export const api = axios.create({
   },
 });
 
-// Intercepta erros para padronizar o formato da mensagem.
+// Intercepta erros para padronizar o formato da mensagem de resposta.
 api.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
-    const axiosError = error as {
-      response?: { data?: { message?: string; errors?: string[] } };
-      message?: string;
-    };
-    const errData = axiosError.response?.data;
-    const message =
-      errData?.errors && errData.errors.length > 0
-        ? `${errData.message ?? 'Erro'}: ${errData.errors.join(', ')}`
-        : (errData?.message ??
-          axiosError.message ??
-          'Erro inesperado. Tente novamente mais tarde.');
+    if (axios.isAxiosError(error)) {
+      const errData = error.response?.data as { message?: string; errors?: string[] } | undefined;
+      const message =
+        errData?.errors && errData.errors.length > 0
+          ? `${errData.message ?? 'Erro'}: ${errData.errors.join(', ')}`
+          : (errData?.message ?? error.message);
 
-    return Promise.reject(new Error(message));
+      return Promise.reject(new Error(message || 'Erro inesperado. Tente novamente mais tarde.'));
+    }
+
+    if (error instanceof Error) {
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(new Error('Erro inesperado. Tente novamente mais tarde.'));
   },
 );
 
