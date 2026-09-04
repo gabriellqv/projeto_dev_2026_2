@@ -14,6 +14,16 @@ export function useContadorAnimado(
   const [valor, setValor] = useState(0);
 
   useEffect(() => {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      setValor(valorFinal);
+      return;
+    }
+
     let inicio: number | null = null;
     let frameId: number;
 

@@ -35,7 +35,7 @@ services:
       postgres:
         condition: service_healthy
     command: >
-      sh -c "cd backend && npx prisma migrate deploy && node dist/prisma/seed.js && node dist/src/server.js"
+      sh -c "cd backend && npx prisma migrate deploy && node dist/src/server.js"
 
   frontend:
     build:
