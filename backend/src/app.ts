@@ -9,6 +9,7 @@ import { swaggerDocument } from './config/swagger.js';
 import { agendamentoAdminRouter } from './modules/agendamentos/routes/agendamento-admin.routes.js';
 import { agendamentoPublicRouter } from './modules/agendamentos/routes/agendamento-public.routes.js';
 import { healthRouter } from './modules/health/routes/health.routes.js';
+import { metricsService } from './modules/health/services/metrics.service.js';
 import { procedimentoAdminRouter } from './modules/procedimentos/routes/procedimento-admin.routes.js';
 import { procedimentoPublicRouter } from './modules/procedimentos/routes/procedimento-public.routes.js';
 import { authRouter } from './modules/usuarios/routes/auth.routes.js';
@@ -18,6 +19,12 @@ import { errorHandler } from './shared/middlewares/error.middleware.js';
 // Este é o composition root do backend.
 
 export const app: Application = express();
+
+// Contabiliza metricas basicas de requisicoes em memoria.
+app.use((req, _res, next) => {
+  metricsService.increment(req.method);
+  next();
+});
 
 // Helmet adiciona headers de segurança básicos.
 app.use(helmet());
