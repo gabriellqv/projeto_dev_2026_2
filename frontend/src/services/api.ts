@@ -1,10 +1,15 @@
 import axios from 'axios';
 
-// Cliente HTTP centralizado para comunicacao com a API OdontoAgenda.
-// Usa variavel de ambiente VITE_API_URL ou fallback para desenvolvimento local.
+// Cliente HTTP centralizado para comunicação com a API OdontoAgenda.
+// Valida a presença da URL da API em produção ou utiliza fallback seguro em desenvolvimento local.
 
-const apiUrl: string =
-  (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:3000/api';
+const envApiUrl = import.meta.env.VITE_API_URL as string | undefined;
+
+if (import.meta.env.PROD && !envApiUrl) {
+  throw new Error('VITE_API_URL não configurada. Defina a URL da API no build.');
+}
+
+const apiUrl: string = envApiUrl ?? 'http://localhost:3000/api';
 
 export const api = axios.create({
   baseURL: apiUrl,

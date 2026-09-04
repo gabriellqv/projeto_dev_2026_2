@@ -41,6 +41,8 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_URL: http://localhost:3000/api
     container_name: odontoagenda-frontend
     restart: unless-stopped
     ports:
