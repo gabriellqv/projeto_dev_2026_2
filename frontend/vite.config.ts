@@ -22,6 +22,15 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-utils': ['clsx', 'tailwind-merge', 'zod', 'axios'],
+        },
+      },
+    },
   },
   test: {
     globals: true,

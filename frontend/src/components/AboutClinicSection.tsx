@@ -11,28 +11,28 @@ import { SectionHeader } from './ui/SectionHeader';
 export function AboutClinicSection(): React.ReactNode {
   const slides = [
     {
-      imagem: '/images/clinica-1.jpg',
+      imagem: '/images/clinica-1.webp',
       titulo: 'Consultórios Modernos & Conforto',
       tag: 'Atendimento Clínico',
       descricao:
         'Cadeiras ergonômicas de última geração e monitores integrados para acompanhamento em tempo real.',
     },
     {
-      imagem: '/images/clinica-2.jpg',
+      imagem: '/images/clinica-2.webp',
       titulo: 'Recepção & Lounge Acolhedor',
       tag: 'Boas-Vindas',
       descricao:
         'Ambiente climatizado, iluminação acolhedora e café especial para você relaxar antes da sua consulta.',
     },
     {
-      imagem: '/images/clinica-3.jpg',
+      imagem: '/images/clinica-3.webp',
       titulo: 'Escaneamento Intraoral 3D',
       tag: 'Tecnologia Digital',
       descricao:
         'Planejamento 3D do seu sorriso na tela com máxima precisão, sem precisar daquelas massas desconfortáveis.',
     },
     {
-      imagem: '/images/clinica-4.jpg',
+      imagem: '/images/clinica-4.webp',
       titulo: 'Segurança & Diagnóstico Digital',
       tag: 'Segurança Total',
       descricao:
@@ -160,6 +160,10 @@ export function AboutClinicSection(): React.ReactNode {
                       src={slide.imagem}
                       alt={slide.titulo}
                       className="h-full w-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      width={1000}
+                      height={600}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
 

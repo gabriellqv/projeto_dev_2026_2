@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
-import { cn } from '../lib/cn.js';
-import type { StatusAgendamento } from '../services/admin.service.js';
+import { cn } from '../lib/cn';
+import type { StatusAgendamento } from '../services/admin.service';
 
 export interface StatusOption {
   value: string;
@@ -24,6 +24,7 @@ interface StatusSelectProps {
   onChange: (value: string) => void;
   options?: StatusOption[];
   variant?: 'filter' | 'action';
+  'aria-label'?: string;
 }
 
 export function StatusSelect({
@@ -31,9 +32,11 @@ export function StatusSelect({
   onChange,
   options = STATUS_FILTER_OPTIONS,
   variant = 'filter',
+  'aria-label': ariaLabel,
 }: StatusSelectProps): React.ReactNode {
   const [aberto, setAberto] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const selecionado = options.find((opt) => opt.value === value) ?? options[0];
 
@@ -52,14 +55,38 @@ export function StatusSelect({
     };
   }, [aberto]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        setAberto(false);
+        buttonRef.current?.focus();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (!aberto) {
+          setAberto(true);
+          return;
+        }
+        const currentIndex = options.findIndex((opt) => opt.value === value);
+        const nextIndex =
+          e.key === 'ArrowDown'
+            ? (currentIndex + 1) % options.length
+            : (currentIndex - 1 + options.length) % options.length;
+        onChange(options[nextIndex].value);
+      }
+    },
+    [aberto, options, value, onChange],
+  );
+
   const isAction = variant === 'action';
 
   return (
     <div
       className={cn('relative', isAction ? 'inline-block w-36' : 'w-full sm:w-52 shrink-0')}
       ref={containerRef}
+      onKeyDown={handleKeyDown}
     >
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => {
           setAberto((prev) => !prev);
@@ -74,6 +101,7 @@ export function StatusSelect({
         )}
         aria-haspopup="listbox"
         aria-expanded={aberto}
+        aria-label={ariaLabel || (isAction ? 'Alterar status' : 'Filtrar por status')}
       >
         <div className="flex items-center gap-1.5 truncate">
           <span
@@ -117,6 +145,7 @@ export function StatusSelect({
                     onClick={() => {
                       onChange(opcao.value);
                       setAberto(false);
+                      buttonRef.current?.focus();
                     }}
                     className={cn(
                       'flex w-full items-center justify-between truncate rounded-xl transition-colors',

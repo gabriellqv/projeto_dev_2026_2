@@ -18,7 +18,7 @@ export function TestimonialsSection(): React.ReactNode {
       comentario:
         'Sempre tive receio de sentir sensibilidade durante o clareamento, mas a Dra. Beatriz foi extremamente cuidadosa. O resultado superou todas as minhas expectativas, meu sorriso ficou natural e radiante!',
       estrelas: 5,
-      foto: '/images/camila.jpg',
+      foto: '/images/camila.webp',
       tag: 'Paciente Verificada',
     },
     {
@@ -28,7 +28,7 @@ export function TestimonialsSection(): React.ReactNode {
       comentario:
         'Quebrei parte do dente da frente em um acidente e fui atendido com agilidade impecável. A reconstrução ficou totalmente imperceptível. O atendimento humanizado fez toda a diferença.',
       estrelas: 5,
-      foto: '/images/rodrigo.jpg',
+      foto: '/images/rodrigo.webp',
       tag: 'Paciente Verificado',
     },
     {
@@ -38,7 +38,7 @@ export function TestimonialsSection(): React.ReactNode {
       comentario:
         'Clínica impecável, equipamentos ultra modernos e pontualidade britânica. Vale a pena vir de outra cidade pelo padrão de qualidade e carinho de toda a equipe.',
       estrelas: 5,
-      foto: '/images/juliana.jpg',
+      foto: '/images/juliana.webp',
       tag: 'Paciente Verificada',
     },
     {
@@ -48,7 +48,7 @@ export function TestimonialsSection(): React.ReactNode {
       comentario:
         'Tinha pânico de tratamento de canal por experiências passadas. Aqui não senti absolutamente nada de dor! A tecnologia e o acolhimento da equipe me deixaram super tranquilo.',
       estrelas: 5,
-      foto: '/images/lucas.jpg',
+      foto: '/images/lucas.webp',
       tag: 'Paciente Verificado',
     },
     {
@@ -58,7 +58,7 @@ export function TestimonialsSection(): React.ReactNode {
       comentario:
         'O escaneamento digital 3D me permitiu ver detalhadamente a saúde de cada dente na tela. A transparência e o profissionalismo me conquistaram. Recomendo para toda a família!',
       estrelas: 5,
-      foto: '/images/mariana.jpg',
+      foto: '/images/mariana.webp',
       tag: 'Paciente Verificada',
     },
   ];
@@ -319,7 +319,12 @@ export function TestimonialsSection(): React.ReactNode {
 
                   {/* Autor com Foto Real */}
                   <div className="mt-6 flex items-center gap-3.5 border-t border-subtle pt-4">
-                    <Avatar name={depoimento.nome} size="md" className="rounded-full" />
+                    <Avatar
+                      name={depoimento.nome}
+                      src={depoimento.foto}
+                      alt={depoimento.nome}
+                      size="md"
+                    />
                     <div>
                       <h4 className="font-bold text-primary text-sm">{depoimento.nome}</h4>
                       <p className="text-[11px] font-medium text-accent">

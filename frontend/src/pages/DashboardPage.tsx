@@ -1,25 +1,26 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-import { AdminLayout } from '../components/AdminLayout.js';
-import { StatusActionSelect } from '../components/CustomSelect.js';
-import { Alert } from '../components/ui/Alert.js';
-import { Avatar } from '../components/ui/Avatar.js';
-import { Button } from '../components/ui/Button.js';
-import { Card } from '../components/ui/Card.js';
-import { EmptyState } from '../components/ui/EmptyState.js';
-import { IconButton } from '../components/ui/IconButton.js';
-import { TableSkeleton } from '../components/ui/Skeleton.js';
-import { useToast } from '../contexts/ToastContext.js';
-import { useContadorAnimado } from '../hooks/useContadorAnimado.js';
-import { cn } from '../lib/cn.js';
-import { formatarDataExibicao } from '../schemas/agendamento.schema.js';
+import { AdminLayout } from '../components/AdminLayout';
+import { StatusActionSelect } from '../components/CustomSelect';
+import { Alert } from '../components/ui/Alert';
+import { Avatar } from '../components/ui/Avatar';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import { EmptyState } from '../components/ui/EmptyState';
+import { IconButton } from '../components/ui/IconButton';
+import { TableSkeleton } from '../components/ui/Skeleton';
+import { useToast } from '../contexts/ToastContext';
+import { useContadorAnimado } from '../hooks/useContadorAnimado';
+import { useDebounce } from '../hooks/useDebounce';
+import { cn } from '../lib/cn';
+import { formatarDataExibicao } from '../schemas/agendamento.schema';
 import {
   adminApi,
   type AgendamentoAdmin,
   type Procedimento,
   type StatusAgendamento,
-} from '../services/admin.service.js';
+} from '../services/admin.service';
 
 export function DashboardPage(): React.ReactNode {
   const toast = useToast();
@@ -30,6 +31,7 @@ export function DashboardPage(): React.ReactNode {
   const [limite] = useState(10);
   const [statusFiltro, setStatusFiltro] = useState<string>('');
   const [busca, setBusca] = useState('');
+  const buscaDebounced = useDebounce(busca, 350);
   const [carregando, setCarregando] = useState(false);
   const [recarregando, setRecarregando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
@@ -55,7 +57,7 @@ export function DashboardPage(): React.ReactNode {
             pagina,
             limite,
             status: statusFiltro || undefined,
-            busca: busca || undefined,
+            busca: buscaDebounced || undefined,
           }),
           adminApi.listarAgendamentos({ pagina: 1, limite: 100 }),
           adminApi.listarProcedimentos().catch(() => []),
@@ -82,7 +84,7 @@ export function DashboardPage(): React.ReactNode {
         setRecarregando(false);
       }
     },
-    [pagina, statusFiltro, busca, limite],
+    [pagina, statusFiltro, buscaDebounced, limite],
   );
 
   useEffect(() => {

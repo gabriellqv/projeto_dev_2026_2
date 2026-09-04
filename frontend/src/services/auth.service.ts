@@ -1,4 +1,4 @@
-import { api } from './api.js';
+import { api } from './api';
 
 // Servico de autenticacao do painel administrativo.
 // Armazena o token JWT no localStorage para persistencia entre recarregamentos.

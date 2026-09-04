@@ -1,10 +1,10 @@
 import eslint from '@eslint/js';
+import importPlugin from 'eslint-plugin-import';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
-import tseslint from 'typescript-eslint';
-import importPlugin from 'eslint-plugin-import';
 import sonarjs from 'eslint-plugin-sonarjs';
 import unusedImports from 'eslint-plugin-unused-imports';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   eslint.configs.recommended,
@@ -66,6 +66,7 @@ export default tseslint.config(
     files: ['src/**/*.test.{ts,tsx}'],
     rules: {
       'no-console': 'off',
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
   {
