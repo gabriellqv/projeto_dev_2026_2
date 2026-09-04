@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
+import { toAgendamentoDto } from '../../../shared/dtos/agendamento.dto.js';
 import type { AgendamentoService } from '../services/agendamento.service.js';
 
 // Controller publico de agendamentos.
@@ -12,6 +13,6 @@ export class AgendamentoPublicController {
   criar: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const agendamento = await this.agendamentoService.criar(request.body);
 
-    response.status(201).json(agendamento);
+    response.status(201).json(toAgendamentoDto(agendamento));
   };
 }

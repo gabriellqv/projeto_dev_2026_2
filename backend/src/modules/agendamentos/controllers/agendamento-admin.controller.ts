@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
+import { toAgendamentoDetalheDto, toAgendamentoDto } from '../../../shared/dtos/agendamento.dto.js';
 import type { AgendamentoService } from '../services/agendamento.service.js';
 
 // Controller administrativo de agendamentos.
@@ -17,7 +18,10 @@ export class AgendamentoAdminController {
       limite: Number(request.query.limite) || 10,
     });
 
-    response.json(resultado);
+    response.json({
+      agendamentos: resultado.agendamentos.map(toAgendamentoDto),
+      total: resultado.total,
+    });
   };
 
   contarPorStatus: RequestHandler = async (
@@ -32,7 +36,7 @@ export class AgendamentoAdminController {
   buscarPorId: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const agendamento = await this.agendamentoService.buscarPorId(String(request.params.id));
 
-    response.json(agendamento);
+    response.json(toAgendamentoDetalheDto(agendamento));
   };
 
   atualizarStatus: RequestHandler = async (request: Request, response: Response): Promise<void> => {
@@ -41,6 +45,6 @@ export class AgendamentoAdminController {
       request.body,
     );
 
-    response.json(agendamento);
+    response.json(toAgendamentoDto(agendamento));
   };
 }

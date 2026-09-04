@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express';
 
+import { toProcedimentoDto } from '../../../shared/dtos/index.js';
 import type { ProcedimentoService } from '../services/procedimento.service.js';
 
 // Controller publico de procedimentos.
@@ -12,6 +13,6 @@ export class ProcedimentoPublicController {
   listarAtivos: RequestHandler = async (_request: Request, response: Response): Promise<void> => {
     const procedimentos = await this.procedimentoService.listarAtivos();
 
-    response.json(procedimentos);
+    response.json(procedimentos.map(toProcedimentoDto));
   };
 }
