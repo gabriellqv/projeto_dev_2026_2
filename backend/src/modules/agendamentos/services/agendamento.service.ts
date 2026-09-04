@@ -7,7 +7,11 @@ import type {
   ListarAgendamentosInput,
 } from '../../../shared/schemas/agendamento.schema.js';
 import type { ProcedimentoRepository } from '../../procedimentos/procedimento.repository.js';
-import type { AgendamentoComHistorico, AgendamentoRepository } from '../agendamento.repository.js';
+import type {
+  AgendamentoComHistorico,
+  AgendamentoRepository,
+  ContagemPorStatus,
+} from '../agendamento.repository.js';
 
 // Service centraliza a logica de negocio de agendamentos.
 // Depende das interfaces dos repositorios, nao das implementacoes Prisma.
@@ -66,6 +70,10 @@ export class AgendamentoService {
     ]);
 
     return { agendamentos, total };
+  }
+
+  async contarPorStatus(): Promise<ContagemPorStatus> {
+    return this.agendamentoRepository.contarPorStatus();
   }
 
   async buscarPorId(id: string): Promise<AgendamentoComHistorico> {

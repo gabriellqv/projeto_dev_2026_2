@@ -52,14 +52,14 @@ export function DashboardPage(): React.ReactNode {
       setErro(null);
 
       try {
-        const [resAgendamentos, resTodosAgendamentos, resProcedimentos] = await Promise.all([
+        const [resAgendamentos, resContagens, resProcedimentos] = await Promise.all([
           adminApi.listarAgendamentos({
             pagina,
             limite,
             status: statusFiltro || undefined,
             busca: buscaDebounced || undefined,
           }),
-          adminApi.listarAgendamentos({ pagina: 1, limite: 100 }),
+          adminApi.contarAgendamentosPorStatus(),
           adminApi.listarProcedimentos().catch(() => []),
         ]);
 
@@ -67,13 +67,12 @@ export function DashboardPage(): React.ReactNode {
         setTotal(resAgendamentos.total);
         setProcedimentos(resProcedimentos);
 
-        const todos = resTodosAgendamentos.agendamentos;
         setContagensGlobais({
-          total: resTodosAgendamentos.total,
-          pendentes: todos.filter((a) => a.status === 'PENDENTE').length,
-          confirmados: todos.filter((a) => a.status === 'CONFIRMADO').length,
-          atendidos: todos.filter((a) => a.status === 'ATENDIDO').length,
-          cancelados: todos.filter((a) => a.status === 'CANCELADO').length,
+          total: resContagens.total,
+          pendentes: resContagens.pendentes,
+          confirmados: resContagens.confirmados,
+          atendidos: resContagens.atendidos,
+          cancelados: resContagens.cancelados,
         });
       } catch (error) {
         const mensagem =

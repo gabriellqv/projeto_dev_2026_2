@@ -182,4 +182,35 @@ describe('AgendamentoService', () => {
     expect(resultado.agendamentos).toHaveLength(1);
     expect(resultado.total).toBe(2);
   });
+
+  it('deve contar agendamentos por status agregados', async () => {
+    const procedimento = await criarProcedimentoAtivo();
+
+    await service.criar({
+      nome: 'Pendente',
+      email: 'p@email.com',
+      data: new Date('2026-10-10'),
+      horario: '08:00',
+      procedimentoId: procedimento.id,
+    });
+
+    const a2 = await service.criar({
+      nome: 'Confirmado',
+      email: 'c@email.com',
+      data: new Date('2026-10-10'),
+      horario: '09:00',
+      procedimentoId: procedimento.id,
+    });
+    await service.atualizarStatus(a2.id, { status: 'CONFIRMADO' });
+
+    const contagem = await service.contarPorStatus();
+
+    expect(contagem).toEqual({
+      total: 2,
+      pendentes: 1,
+      confirmados: 1,
+      cancelados: 0,
+      atendidos: 0,
+    });
+  });
 });

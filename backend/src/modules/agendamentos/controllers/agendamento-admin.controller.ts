@@ -20,6 +20,15 @@ export class AgendamentoAdminController {
     response.json(resultado);
   };
 
+  contarPorStatus: RequestHandler = async (
+    _request: Request,
+    response: Response,
+  ): Promise<void> => {
+    const contagem = await this.agendamentoService.contarPorStatus();
+
+    response.json(contagem);
+  };
+
   buscarPorId: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const agendamento = await this.agendamentoService.buscarPorId(String(request.params.id));
 

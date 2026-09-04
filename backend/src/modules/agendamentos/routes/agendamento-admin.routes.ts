@@ -33,6 +33,13 @@ agendamentoAdminRouter.get(
   asyncHandler(controller.listar),
 );
 agendamentoAdminRouter.get(
+  '/contagem',
+  adminLimiter,
+  autenticar(),
+  exigirAdmin,
+  asyncHandler(controller.contarPorStatus),
+);
+agendamentoAdminRouter.get(
   '/:id',
   adminLimiter,
   autenticar(),

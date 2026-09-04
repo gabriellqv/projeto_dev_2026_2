@@ -121,6 +121,31 @@ describe('Rotas HTTP', () => {
       expect(response.status).toBe(200);
       expect(response.body.agendamentos).toBeInstanceOf(Array);
     });
+
+    it('deve retornar contagem agregada de agendamentos por status', async () => {
+      await request(app).post('/api/agendamentos').send({
+        nome: 'Pendente 1',
+        email: 'p1@email.com',
+        data: '2026-10-10',
+        horario: '10:00',
+        procedimentoId,
+      });
+
+      const response = await request(app)
+        .get('/api/admin/agendamentos/contagem')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          total: 1,
+          pendentes: 1,
+          confirmados: 0,
+          cancelados: 0,
+          atendidos: 0,
+        }),
+      );
+    });
   });
 
   describe('PATCH /api/admin/agendamentos/:id/status', () => {
