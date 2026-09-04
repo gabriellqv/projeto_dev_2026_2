@@ -22,17 +22,8 @@ FROM nginx:alpine AS runner
 
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 
-# Configuracao customizada do Nginx para SPA.
-# Redireciona rotas internas para index.html.
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# Configuracao customizada do Nginx para SPA com gzip e headers de seguranca.
+COPY --from=builder /app/frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
