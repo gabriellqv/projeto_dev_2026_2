@@ -16,12 +16,14 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,js,json,md,yml,yaml}\"",
     "type-check": "npm run type-check -w backend && npm run type-check -w frontend",
     "test": "npm run test -w backend && npm run test -w frontend",
+    "test:e2e": "playwright test",
     "db:seed:docker": "npm run db:seed:docker -w backend",
     "prepare": "husky"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@playwright/test": "^1.63.0",
     "concurrently": "^9.1.2",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.1",
