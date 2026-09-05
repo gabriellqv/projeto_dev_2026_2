@@ -6,6 +6,7 @@ export const authLimiter = rateLimit({
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
   message: {
     message: 'Muitas tentativas de login. Tente novamente mais tarde.',
   },
@@ -17,6 +18,7 @@ export const publicCreationLimiter = rateLimit({
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
   message: {
     message: 'Limite de criacao atingido. Tente novamente mais tarde.',
   },
@@ -28,6 +30,7 @@ export const adminLimiter = rateLimit({
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
   message: {
     message: 'Muitas requisicoes. Tente novamente mais tarde.',
   },

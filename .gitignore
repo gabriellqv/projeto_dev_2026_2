@@ -66,6 +66,9 @@ desktop.ini
 .nyc_output/
 coverage/
 *.lcov
+playwright-report/
+test-results/
+blob-report/
 
 # ===============
 # Prisma e banco local
