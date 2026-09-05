@@ -38,11 +38,12 @@ test.describe('Agendamento Público de Consultas', () => {
   test('deve preencher e solicitar um agendamento com sucesso', async ({ page }) => {
     await page.goto('/');
 
-    // 1. Rola até o formulário de agendamento
+    // 1. Rola até o formulário de agendamento e aguarda carregamento dos procedimentos
+    await expect(page.getByText('Limpeza e Profilaxia').first()).toBeVisible({ timeout: 10000 });
     const botaoEnviar = page.getByRole('button', { name: /Solicitar Agendamento/i });
     await botaoEnviar.scrollIntoViewIfNeeded();
 
-    // 2. Aguarda e seleciona o primeiro procedimento na lista
+    // 2. Abre e seleciona o primeiro procedimento na lista
     await page.locator('#procedimento-btn').click();
     const primeiroProcedimento = page.locator('[role="option"]').first();
     await expect(primeiroProcedimento).toBeVisible({ timeout: 10000 });

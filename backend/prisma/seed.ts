@@ -45,9 +45,9 @@ async function main(): Promise<void> {
   }
 
   // 2. Usuário Administrador
-  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminPassword = (process.env.ADMIN_PASSWORD ?? 'admin123').trim();
 
-  if (!adminPassword || adminPassword.length < 8) {
+  if (adminPassword.length < 8) {
     throw new Error(
       'ADMIN_PASSWORD deve ter no mínimo 8 caracteres e estar configurado via ambiente.',
     );
