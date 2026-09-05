@@ -42,7 +42,11 @@ test.describe('Agendamento Público de Consultas', () => {
     const botaoEnviar = page.getByRole('button', { name: /Solicitar Agendamento/i });
     await botaoEnviar.scrollIntoViewIfNeeded();
 
-    // 2. Preenche dados pessoais
+    // 2. Seleciona o primeiro procedimento na lista
+    await page.locator('#procedimento-btn').click();
+    await page.locator('[role="option"]').first().click();
+
+    // 3. Preenche dados pessoais
     const nomePaciente = 'Paciente Teste E2E Playwright';
     const emailPaciente = `paciente.e2e.${Date.now()}@email.com`;
     await page.fill('#nome', nomePaciente);
@@ -50,22 +54,24 @@ test.describe('Agendamento Público de Consultas', () => {
     await page.fill('#telefone', '(31) 98888-7777');
     await page.fill('#observacao', 'Agendamento automatizado E2E via Playwright');
 
-    // 3. Seleciona uma data futura no calendário
+    // 4. Seleciona uma data futura no calendário
     await page.locator('#data-btn').click();
     await page.getByRole('button', { name: 'Próximo mês' }).click();
     await page.locator('[role="grid"]').getByRole('button', { name: /^15/ }).click();
 
-    // 4. Seleciona o primeiro horário disponível
+    // 5. Seleciona o primeiro horário disponível
     await page.locator('#horario-btn').click();
     const primeiroHorario = page.locator('[role="dialog"]').getByRole('button').first();
     await primeiroHorario.click();
 
-    // 5. Submete o agendamento
+    // 6. Submete o agendamento
     await botaoEnviar.click();
 
-    // 6. Valida redirecionamento para a página de confirmação
-    await expect(page).toHaveURL(/.*confirmacao/);
-    await expect(page.getByRole('heading', { name: /Solicitação Enviada!/i })).toBeVisible();
+    // 7. Valida redirecionamento para a página de confirmação
+    await expect(page).toHaveURL(/.*confirmacao/, { timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Solicitação Enviada!/i })).toBeVisible({
+      timeout: 10000,
+    });
     await expect(page.getByText(nomePaciente)).toBeVisible();
   });
 });

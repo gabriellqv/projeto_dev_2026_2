@@ -23,9 +23,11 @@ test.describe('Painel Administrativo e Gestão Operacional', () => {
 
     await page.getByRole('button', { name: /Acessar Painel/i }).click();
 
-    // 2. Valida redirecionamento para o Dashboard administrativo
-    await expect(page).toHaveURL(/.*admin/);
-    await expect(page.getByRole('heading', { name: /Visão Geral & Atendimentos/i })).toBeVisible();
+    // 2. Valida redirecionamento para o Dashboard administrativo (aguarda sair da tela de login)
+    await expect(page).toHaveURL(/\/admin$/, { timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Visão Geral & Atendimentos/i })).toBeVisible({
+      timeout: 10000,
+    });
 
     // 3. Valida a presença dos cards de KPIs e distribuição
     await expect(page.getByText('Total', { exact: true }).first()).toBeVisible();
