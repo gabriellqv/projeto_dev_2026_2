@@ -26,8 +26,9 @@ export default defineConfig({
   webServer: [
     {
       command: 'npm run dev -w backend',
-      port: 3000,
+      url: 'http://localhost:3000/api/health',
       reuseExistingServer: !process.env.CI,
+      timeout: 60000,
       env: {
         ...(process.env as Record<string, string>),
         NODE_ENV: 'test',
@@ -42,8 +43,9 @@ export default defineConfig({
     },
     {
       command: 'npm run dev -w frontend',
-      port: 5173,
+      url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
+      timeout: 60000,
       env: {
         ...(process.env as Record<string, string>),
         VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:3000/api',
