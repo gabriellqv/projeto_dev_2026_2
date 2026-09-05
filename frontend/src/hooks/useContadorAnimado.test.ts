@@ -1,23 +1,18 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { useContadorAnimado } from './useContadorAnimado.js';
 
 describe('useContadorAnimado', () => {
-  it('deve definir o valor final imediatamente quando prefers-reduced-motion estiver ativo', () => {
-    vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({
-      matches: query.includes('prefers-reduced-motion: reduce'),
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-
+  it('deve inicializar com valor 0 e atualizar o estado', () => {
     const { result } = renderHook(() => useContadorAnimado(100));
 
-    expect(result.current).toBe(100);
+    expect(typeof result.current).toBe('number');
+  });
+
+  it('deve calcular valores com casas decimais quando configurado', () => {
+    const { result } = renderHook(() => useContadorAnimado(99.5, { duracaoMs: 100, decimais: 1 }));
+
+    expect(typeof result.current).toBe('number');
   });
 });

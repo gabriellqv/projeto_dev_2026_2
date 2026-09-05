@@ -7,17 +7,36 @@ import type { AuthService } from '../services/auth.service.js';
 // Recebe email e senha, delega a validação para o AuthService e define o cookie httpOnly.
 // Permite recuperar a sessão ativa e realizar logout com limpeza de cookies.
 
+function obterOpcoesCookie(): {
+  httpOnly: boolean;
+  secure: boolean;
+  sameSite: 'none' | 'lax' | 'strict';
+} {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const sameSiteEnv = process.env.COOKIE_SAME_SITE as 'none' | 'lax' | 'strict' | undefined;
+  const sameSite = sameSiteEnv ?? (isProduction ? 'none' : 'lax');
+  const secure =
+    process.env.COOKIE_SECURE !== undefined ? process.env.COOKIE_SECURE === 'true' : isProduction;
+
+  return {
+    httpOnly: true,
+    secure,
+    sameSite,
+  };
+}
+
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   login: RequestHandler = async (request: Request, response: Response): Promise<void> => {
     const { usuario, token } = await this.authService.login(request.body);
+    const { httpOnly, secure, sameSite } = obterOpcoesCookie();
 
     response
       .cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        httpOnly,
+        secure,
+        sameSite,
         maxAge: 24 * 60 * 60 * 1000,
       })
       .status(200)
@@ -44,11 +63,13 @@ export class AuthController {
   };
 
   logout: RequestHandler = async (_request: Request, response: Response): Promise<void> => {
+    const { httpOnly, secure, sameSite } = obterOpcoesCookie();
+
     response
       .clearCookie('token', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        httpOnly,
+        secure,
+        sameSite,
       })
       .status(200)
       .json({ message: 'Logout realizado com sucesso' });
