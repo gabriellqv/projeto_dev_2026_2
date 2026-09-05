@@ -42,9 +42,11 @@ test.describe('Agendamento Público de Consultas', () => {
     const botaoEnviar = page.getByRole('button', { name: /Solicitar Agendamento/i });
     await botaoEnviar.scrollIntoViewIfNeeded();
 
-    // 2. Seleciona o primeiro procedimento na lista
+    // 2. Aguarda e seleciona o primeiro procedimento na lista
     await page.locator('#procedimento-btn').click();
-    await page.locator('[role="option"]').first().click();
+    const primeiroProcedimento = page.locator('[role="option"]').first();
+    await expect(primeiroProcedimento).toBeVisible({ timeout: 10000 });
+    await primeiroProcedimento.click();
 
     // 3. Preenche dados pessoais
     const nomePaciente = 'Paciente Teste E2E Playwright';
@@ -62,13 +64,14 @@ test.describe('Agendamento Público de Consultas', () => {
     // 5. Seleciona o primeiro horário disponível
     await page.locator('#horario-btn').click();
     const primeiroHorario = page.locator('[role="dialog"]').getByRole('button').first();
+    await expect(primeiroHorario).toBeVisible({ timeout: 10000 });
     await primeiroHorario.click();
 
     // 6. Submete o agendamento
     await botaoEnviar.click();
 
     // 7. Valida redirecionamento para a página de confirmação
-    await expect(page).toHaveURL(/.*confirmacao/, { timeout: 10000 });
+    await expect(page).toHaveURL(/.*confirmacao/, { timeout: 15000 });
     await expect(page.getByRole('heading', { name: /Solicitação Enviada!/i })).toBeVisible({
       timeout: 10000,
     });

@@ -38,7 +38,7 @@ export default defineConfig({
         ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'admin123',
         JWT_SECRET: process.env.JWT_SECRET || 'chave-secreta-de-teste-ci-minimo-32-caracteres',
       },
-      stdout: 'ignore',
+      stdout: 'pipe',
       stderr: 'pipe',
     },
     {
