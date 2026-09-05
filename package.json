@@ -16,6 +16,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mjs,js,json,md,yml,yaml}\"",
     "type-check": "npm run type-check -w backend && npm run type-check -w frontend",
     "test": "npm run test -w backend && npm run test -w frontend",
+    "db:seed:docker": "npm run db:seed:docker -w backend",
     "prepare": "husky"
   },
   "devDependencies": {

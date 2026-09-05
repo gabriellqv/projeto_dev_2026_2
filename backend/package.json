@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "format": "prettier --write \"src/**/*.{ts,mjs}\" \"tests/**/*.{ts,mjs}\"",
@@ -19,7 +19,7 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:seed:docker": "docker compose exec backend npx prisma db seed",
+    "db:seed:docker": "docker compose exec backend node backend/dist/prisma/seed.js",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
   },
