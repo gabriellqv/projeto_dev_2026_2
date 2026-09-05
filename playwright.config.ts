@@ -5,6 +5,7 @@ import { defineConfig, devices } from '@playwright/test';
  * Valida a jornada real do paciente e do administrador em navegador Chromium.
  */
 export default defineConfig({
+  globalSetup: './e2e/global-setup.ts',
   testDir: './e2e',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
