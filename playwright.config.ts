@@ -29,7 +29,13 @@ export default defineConfig({
       port: 3000,
       reuseExistingServer: !process.env.CI,
       env: {
+        ...(process.env as Record<string, string>),
         NODE_ENV: 'test',
+        DATABASE_URL:
+          process.env.DATABASE_URL ||
+          'postgresql://odontoagenda:odontoagenda@localhost:5432/odontoagenda?schema=public',
+        ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'admin123',
+        JWT_SECRET: process.env.JWT_SECRET || 'chave-secreta-de-teste-ci-minimo-32-caracteres',
       },
       stdout: 'ignore',
       stderr: 'pipe',
@@ -38,6 +44,10 @@ export default defineConfig({
       command: 'npm run dev -w frontend',
       port: 5173,
       reuseExistingServer: !process.env.CI,
+      env: {
+        ...(process.env as Record<string, string>),
+        VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:3000/api',
+      },
       stdout: 'ignore',
       stderr: 'pipe',
     },

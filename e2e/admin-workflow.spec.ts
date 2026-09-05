@@ -17,8 +17,9 @@ test.describe('Painel Administrativo e Gestão Operacional', () => {
     await page.goto('/admin/login');
 
     // 1. Preenche credenciais do administrador padrão
+    const senhaAdmin = process.env.ADMIN_PASSWORD || 'admin123';
     await page.fill('#email', 'admin@sorrisomineiro.com.br');
-    await page.fill('#senha', 'admin123');
+    await page.fill('#senha', senhaAdmin);
 
     await page.getByRole('button', { name: /Acessar Painel/i }).click();
 
