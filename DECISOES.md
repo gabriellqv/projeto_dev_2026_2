@@ -6,13 +6,23 @@ Escolhi a clínica odontológica fictícia **Sorriso Mineiro** porque o agendame
 
 ## Arquitetura e stack
 
-Optei por uma stack muito usada no mercado (Node.js, Express, React e PostgreSQL) por ter uma comunidade ampla e facilitar a manutenção por outros desenvolvedores. Estruturei a arquitetura em camadas simples para que o código seja fácil de entender e testar, evitando a complexidade de frameworks mais opinados como NestJS:
+Optei por uma stack amplamente adotada no mercado (Node.js, Express, React e PostgreSQL) por sua maturidade, performance e facilidade de manutenção por qualquer equipe de desenvolvimento.
 
-- **Monorepo com TypeScript e Zod:** Compartilha os mesmos tipos e validações no frontend e no backend, evitando erros de contrato.
-- **Node.js, Express e PostgreSQL:** O Express fornece uma API leve e flexível sem complexidade desnecessária. O PostgreSQL com Prisma cuida dos relacionamentos entre pacientes, horários e procedimentos, garantindo que não existam agendamentos duplicados.
-- **Arquitetura em camadas e injeção de dependências:** Adotei o Repository Pattern com injeção de dependências via factories (inversão de controle). Isso desacoplou as regras de negócio do banco de dados e permitiu injetar repositórios em memória para rodar testes unitários rápidos e isolados.
-- **JWT em cookies httpOnly:** Protege a sessão do administrador contra acessos indevidos via scripts no navegador (XSS), sendo mais seguro do que salvar no `localStorage`.
-- **React, Vite e Tailwind CSS:** O Vite entrega inicialização rápida e build otimizado. O React organiza a interface em componentes isolados com carregamento sob demanda, enquanto o Tailwind facilita a criação do tema visual e do modo escuro.
+- **Monorepo com TypeScript e Zod:** Compartilha tipos e validações entre frontend e backend, eliminando inconsistências de contrato.
+- **Node.js, Express e PostgreSQL:** O Express fornece uma API REST leve, flexível e sem mágica oculta. O PostgreSQL com Prisma cuida dos relacionamentos entre pacientes, horários e procedimentos com integridade referencial e índices de busca.
+- **Inversão de Dependências (Repository Pattern):** Desacoplou a lógica de domínio do banco de dados, permitindo injetar repositórios in-memory para testes unitários instantâneos e isolados.
+- **JWT em cookies httpOnly:** Protege a sessão do administrador contra acessos indevidos via scripts no navegador (XSS), com atributo `SameSite=Lax` e CORS restrito.
+- **React, Vite e Tailwind CSS:** O Vite entrega inicialização rápida e build otimizado. O React organiza a interface em componentes atômicos e reutilizáveis, enquanto o Tailwind fornece design tokens semânticos e suporte nativo ao modo escuro.
+
+**O que ganhei com a escolha:**
+
+- Tipagem estrita de ponta a ponta e reutilização direta de schemas de validação Zod.
+- Baixo acoplamento e facilidade para testar serviços sem subir containers.
+- Performance de carregamento com code-splitting por rotas (`React.lazy`) e assets otimizados.
+
+**O que perdi (trade-offs):**
+
+- Maior tempo de configuração inicial do monorepo e ferramentas (ESLint, Prettier, TypeScript, Husky) quando comparado a frameworks all-in-one opinados como Laravel ou Rails.
 
 ## Decisões de produto
 
@@ -30,10 +40,11 @@ Optei por uma stack muito usada no mercado (Node.js, Express, React e PostgreSQL
 
 ## Testes
 
-Priorizei testar os fluxos centrais que não podem falhar em produção:
+Priorizei cobrir a pirâmide de testes completa com foco nos fluxos centrais que não podem falhar em produção:
 
-- **Backend:** Testes unitários de regras de negócio (criação de registros, recusa de inválidos e transição de status) com repositórios in-memory e testes de integração com banco de dados.
-- **Frontend:** Testes do formulário público com React Testing Library, roteamento e bloqueio do painel sem autenticação (`ProtectedRoute`).
+- **Backend (Unitários e Integração):** 28 testes unitários de regras de negócio com repositórios in-memory e 15 testes de integração com banco PostgreSQL real e Supertest.
+- **Frontend (Unitários):** 23 testes cobrindo o formulário de agendamento público com React Testing Library, hooks de animação e roteamento de rotas protegidas (`ProtectedRoute`).
+- **Ponta a Ponta (E2E com Playwright):** 6 testes em navegador Chromium headless cobrindo os fluxos reais de ponta a ponta do paciente e do administrador, rodando na pipeline de CI.
 
 ## Melhorias além do mínimo
 

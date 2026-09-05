@@ -78,11 +78,13 @@ npm run dev
 ## Testes e Qualidade
 
 ```bash
-npm run test          # Executa todos os testes unitários (backend + frontend)
-npm run lint          # Executa ESLint no monorepo
-npm run type-check    # Validação estrita de tipos TypeScript (tsc --noEmit)
-npm run format:check  # Verifica formatação com Prettier
-npm run build         # Compila backend e frontend para produção
+npm run test                         # Executa testes unitarios (backend + frontend)
+npm run test:integration -w backend # Executa testes de integracao com PostgreSQL
+npm run test:e2e                     # Executa testes ponta a ponta (E2E) com Playwright
+npm run lint                         # Executa ESLint no monorepo
+npm run type-check                   # Validacao estrita de tipos TypeScript (tsc --noEmit)
+npm run format:check                 # Verifica formatacao com Prettier
+npm run build                        # Compila backend e frontend para producao
 ```
 
 ---
