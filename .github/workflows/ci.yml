@@ -96,3 +96,17 @@ jobs:
       - name: Auditoria de dependências
         run: npm audit --audit-level moderate
         continue-on-error: true
+
+  smoke:
+    name: Smoke Test da Stack
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Executa smoke test da stack
+        run: bash ./scripts/smoke.sh
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET != '' && secrets.JWT_SECRET || 'chave-secreta-de-teste-ci-minimo-32-caracteres' }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD != '' && secrets.ADMIN_PASSWORD || 'admin123' }}
