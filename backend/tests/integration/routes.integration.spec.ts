@@ -10,7 +10,7 @@ import { prisma } from '../../src/shared/database/prisma.js';
 const ADMIN_EMAIL = 'admin@sorrisomineiro.com.br';
 const ADMIN_SENHA = process.env.ADMIN_PASSWORD ?? 'senha-admin-teste-123';
 
-let token: string;
+let authCookie: string;
 let procedimentoId: string;
 
 describe('Rotas HTTP', () => {
@@ -30,7 +30,8 @@ describe('Rotas HTTP', () => {
       senha: ADMIN_SENHA,
     });
 
-    token = login.body.token;
+    const cookies = login.headers['set-cookie'] as unknown as string[];
+    authCookie = cookies.find((c) => c.startsWith('token=')) ?? '';
   });
 
   beforeEach(async () => {
@@ -93,7 +94,8 @@ describe('Rotas HTTP', () => {
       });
 
       expect(response.status).toBe(200);
-      expect(response.body.token).toBeDefined();
+      expect(response.body.usuario.email).toBe(ADMIN_EMAIL);
+      expect(response.headers['set-cookie']).toBeDefined();
     });
 
     it('deve recusar credenciais invalidas', async () => {
@@ -113,10 +115,10 @@ describe('Rotas HTTP', () => {
       expect(response.status).toBe(401);
     });
 
-    it('deve listar agendamentos com token valido', async () => {
+    it('deve listar agendamentos com cookie valido', async () => {
       const response = await request(app)
         .get('/api/admin/agendamentos')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Cookie', [authCookie]);
 
       expect(response.status).toBe(200);
       expect(response.body.agendamentos).toBeInstanceOf(Array);
@@ -133,7 +135,7 @@ describe('Rotas HTTP', () => {
 
       const response = await request(app)
         .get('/api/admin/agendamentos/contagem')
-        .set('Authorization', `Bearer ${token}`);
+        .set('Cookie', [authCookie]);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(
@@ -162,7 +164,7 @@ describe('Rotas HTTP', () => {
 
       const confirmado = await request(app)
         .patch(`/api/admin/agendamentos/${agendamentoId}/status`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', [authCookie])
         .send({ status: 'CONFIRMADO' });
 
       expect(confirmado.status).toBe(200);
@@ -170,7 +172,7 @@ describe('Rotas HTTP', () => {
 
       const cancelado = await request(app)
         .patch(`/api/admin/agendamentos/${agendamentoId}/status`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', [authCookie])
         .send({ status: 'CANCELADO' });
 
       expect(cancelado.status).toBe(200);
@@ -182,7 +184,7 @@ describe('Rotas HTTP', () => {
     it('deve criar e atualizar um procedimento', async () => {
       const criado = await request(app)
         .post('/api/admin/procedimentos')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', [authCookie])
         .send({
           titulo: 'Novo Procedimento',
           ativa: true,
@@ -197,7 +199,7 @@ describe('Rotas HTTP', () => {
 
       const atualizado = await request(app)
         .patch(`/api/admin/procedimentos/${novoProcedimentoId}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', [authCookie])
         .send({ titulo: 'Procedimento Atualizado' });
 
       expect(atualizado.status).toBe(200);
