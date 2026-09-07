@@ -104,7 +104,13 @@ wait_for_http() {
 }
 
 echo "Iniciando a stack via Docker Compose..."
-docker compose up --build -d
+if [ "${SMOKE_SKIP_BUILD:-0}" = "1" ]; then
+  echo "SMOKE_SKIP_BUILD=1: pulando build, levantando containers com imagens existentes..."
+  docker compose up -d
+else
+  echo "Executando build das imagens antes de iniciar os containers..."
+  docker compose up --build -d
+fi
 
 # Verificação de saúde dos serviços principais
 wait_for_health "postgres" 90
