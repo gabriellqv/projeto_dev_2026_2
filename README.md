@@ -123,6 +123,9 @@ npm run format:check                 # Verifica formatacao com Prettier
 npm run build                        # Compila backend e frontend para producao
 ```
 
+> No pipeline de integração contínua (CI), as variáveis `JWT_SECRET` e `ADMIN_PASSWORD` são configuradas via GitHub Secrets, mantendo valores padrão de teste como fallback para execuções em forks e testes locais.
+
+
 ---
 
 ## Estrutura do Monorepo
