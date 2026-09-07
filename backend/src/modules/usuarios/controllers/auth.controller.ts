@@ -3,9 +3,10 @@ import type { Request, RequestHandler, Response } from 'express';
 import type { AuthRequest } from '../../../shared/middlewares/auth.middleware.js';
 import type { AuthService } from '../services/auth.service.js';
 
-// Controller público de autenticação.
-// Recebe email e senha, delega a validação para o AuthService e define o cookie httpOnly.
-// Permite recuperar a sessão ativa e realizar logout com limpeza de cookies.
+// Controller publico de autenticacao.
+// Recebe email e senha, delega a validacao para o AuthService e define o cookie httpOnly.
+// Permite recuperar a sessao ativa e realizar logout com limpeza de cookies.
+// O token nao e retornado no body para evitar exposicao ao JavaScript do cliente.
 
 function obterOpcoesCookie(): {
   httpOnly: boolean;
@@ -42,7 +43,6 @@ export class AuthController {
       .status(200)
       .json({
         usuario: this.serializarUsuario(usuario),
-        token,
       });
   };
 
