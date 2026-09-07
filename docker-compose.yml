@@ -29,8 +29,8 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://odontoagenda:odontoagenda@postgres:5432/odontoagenda?schema=public}
-      JWT_SECRET: ${JWT_SECRET:-chave_secreta_padrao_para_desenvolvimento_local_32_chars}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET e obrigatorio e deve ter no minimo 32 caracteres}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD e obrigatoria e deve ter no minimo 8 caracteres}
       PORT: ${PORT:-3000}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
     ports:
