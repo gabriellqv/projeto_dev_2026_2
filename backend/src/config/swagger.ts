@@ -183,13 +183,13 @@ builder.addPath('/auth/login', {
     },
     responses: {
       '200': {
-        description: 'Login bem-sucedido',
+        description:
+          'Login bem-sucedido. O token JWT e enviado em um cookie httpOnly gerenciado pelo servidor; nao e retornado no corpo da resposta.',
         content: {
           'application/json': {
             schema: {
               type: 'object',
               properties: {
-                token: { type: 'string' },
                 usuario: {
                   type: 'object',
                   properties: {
@@ -213,7 +213,7 @@ builder.addPath('/auth/me', {
   get: {
     tags: ['Autenticacao'],
     summary: 'Recupera dados do usuario autenticado',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     responses: {
       '200': {
         description: 'Dados do usuario logado',
@@ -267,7 +267,7 @@ builder.addPath('/admin/agendamentos', {
   get: {
     tags: ['Admin'],
     summary: 'Lista agendamentos com filtros e paginacao',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     parameters: [
       {
         name: 'status',
@@ -305,7 +305,7 @@ builder.addPath('/admin/agendamentos/{id}', {
   get: {
     tags: ['Admin'],
     summary: 'Detalha agendamento com historico de status',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     parameters: [
       { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
     ],
@@ -337,7 +337,7 @@ builder.addPath('/admin/agendamentos/{id}/status', {
   patch: {
     tags: ['Admin'],
     summary: 'Atualiza status de um agendamento',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     parameters: [
       { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
     ],
@@ -375,7 +375,7 @@ builder.addPath('/admin/procedimentos', {
   get: {
     tags: ['Admin'],
     summary: 'Lista todos os procedimentos',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     responses: {
       '200': {
         description: 'Lista completa de procedimentos',
@@ -391,7 +391,7 @@ builder.addPath('/admin/procedimentos', {
   post: {
     tags: ['Admin'],
     summary: 'Cria um novo procedimento',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     requestBody: {
       required: true,
       content: {
@@ -428,7 +428,7 @@ builder.addPath('/admin/procedimentos/{id}', {
   patch: {
     tags: ['Admin'],
     summary: 'Atualiza um procedimento',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     parameters: [
       { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
     ],
@@ -464,7 +464,7 @@ builder.addPath('/admin/procedimentos/{id}', {
   delete: {
     tags: ['Admin'],
     summary: 'Desativa/exclui um procedimento com seguranca',
-    security: [{ bearerAuth: [] }],
+    security: [{ cookieAuth: [] }],
     parameters: [
       { name: 'id', in: 'path', required: true, schema: { type: 'string', format: 'uuid' } },
     ],
@@ -483,11 +483,12 @@ builder.addPath('/admin/procedimentos/{id}', {
   },
 });
 
-builder.addSecurityScheme('bearerAuth', {
-  type: 'http',
-  scheme: 'bearer',
-  bearerFormat: 'JWT',
-  description: 'Token JWT obtido no login',
+builder.addSecurityScheme('cookieAuth', {
+  type: 'apiKey',
+  in: 'cookie',
+  name: 'token',
+  description:
+    'Cookie httpOnly assinado com JWT, gerenciado pelo servidor apos o login. Nao e necessario enviar manualmente; o navegador o transmite automaticamente.',
 });
 
 export const swaggerDocument = builder.getSpec();

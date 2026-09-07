@@ -9,26 +9,34 @@ Escolhi a clínica odontológica fictícia **Sorriso Mineiro** porque o agendame
 Optei por uma stack amplamente adotada no mercado (Node.js, Express, React e PostgreSQL) por sua maturidade, performance e facilidade de manutenção por qualquer equipe de desenvolvimento.
 
 - **Monorepo com TypeScript e Zod:** Compartilha tipos e validações entre frontend e backend, eliminando inconsistências de contrato.
-- **Node.js, Express e PostgreSQL:** O Express fornece uma API REST leve, flexível e sem mágica oculta. O PostgreSQL com Prisma cuida dos relacionamentos entre pacientes, horários e procedimentos com integridade referencial e índices de busca.
+- **Node.js, Express e PostgreSQL:** O Express fornece uma API REST leve. O PostgreSQL com Prisma cuida dos relacionamentos entre pacientes, horários e procedimentos com integridade referencial e índices de busca.
 - **Inversão de Dependências (Repository Pattern):** Desacoplou a lógica de domínio do banco de dados, permitindo injetar repositórios in-memory para testes unitários instantâneos e isolados.
 - **JWT em cookies httpOnly:** Protege a sessão do administrador contra acessos indevidos via scripts no navegador (XSS), com atributo `SameSite=Lax` e CORS restrito.
-- **React, Vite e Tailwind CSS:** O Vite entrega inicialização rápida e build otimizado. O React organiza a interface em componentes atômicos e reutilizáveis, enquanto o Tailwind fornece design tokens semânticos e suporte nativo ao modo escuro.
+- **React, Vite e Tailwind CSS:** O React organiza a interface em componentes reutilizáveis, e o Tailwind dá suporte nativo ao modo escuro.
 
-**O que ganhei com a escolha:**
+**O que ganhei:**
 
-- Tipagem estrita de ponta a ponta e reutilização direta de schemas de validação Zod.
-- Baixo acoplamento e facilidade para testar serviços sem subir containers.
-- Performance de carregamento com code-splitting por rotas (`React.lazy`) e assets otimizados.
+- Tipagem de ponta a ponta e um único contrato de validação (Zod) entre front e back.
+- Testar regras de negócio sem subir containers (repositórios in-memory).
+- Carregamento mais rápido com code-splitting por rota (`React.lazy`) e assets otimizados.
+- Schema versionado via migrations do Prisma, com índices de busca declarados no próprio modelo.
+- Documentação de API gerada (Swagger/OpenAPI) a partir das rotas.
 
-**O que perdi (trade-offs):**
+**O que perdi:**
 
-- Maior tempo de configuração inicial do monorepo e ferramentas (ESLint, Prettier, TypeScript, Husky) quando comparado a frameworks all-in-one opinados como Laravel ou Rails.
+- Mais tempo de configuração inicial (monorepo, ESLint, Prettier, TypeScript, Husky) do que um framework opinado como Laravel ou Rails.
+- Dois processos para rodar em dev (API e front), em vez de um único servidor.
+- Autenticação por cookie httpOnly exige cuidar do ciclo do token e do `SameSite`/`Secure`, em vez de um `localStorage` simples.
+
+## Ferramentas
+
+- **Husky + commitlint + lint-staged:** mantém mensagens de commit padronizadas e lint no pre-commit.
 
 ## Decisões de produto
 
 - **Procedimentos desativados:** Ao desativar um procedimento no painel, ele deixa de aparecer no formulário público. Agendamentos anteriores permanecem vinculados e visíveis no histórico operacional.
-- **Painel sem registros (estado vazio):** Quando o banco ainda não possui agendamentos, o painel exibe um estado visual informativo orientando sobre o primeiro agendamento em vez de uma tabela vazia e fria.
-- **Transição de status:** O fluxo segue `PENDENTE` -> `CONFIRMADO` -> `ATENDIDO`. O status `CANCELADO` pode ser acionado a partir de pendente ou confirmado; tanto `CANCELADO` quanto `ATENDIDO` são estados finais irreversíveis.
+- **Painel sem registros (estado vazio):** Quando o banco ainda não possui agendamentos, o painel exibe um estado visual informativo orientando sobre o primeiro agendamento.
+- **Transição de status:** O fluxo segue `PENDENTE` -> `CONFIRMADO` -> `ATENDIDO`. O status `CANCELADO` pode ser acionado a partir de pendente ou confirmado; tanto `CANCELADO` quanto `ATENDIDO` são estados finais irreversíveis. `ATENDIDO` é uma extensão do tema (distinguir "confirmado" de "já atendido"), mantendo os três status obrigatórios intactos.
 - **Prevenção de duplicidade:** Uma _unique constraint_ composta no PostgreSQL (`email + data + horario`) impede que o mesmo paciente solicite dois agendamentos no mesmo horário.
 - **Validação de datas:** O formulário bloqueia datas no passado e domingos diretamente no calendário, com validação complementar no backend.
 - **Busca e paginação no backend:** A listagem principal do painel processa filtros por status, busca textual (nome/e-mail) e paginação (10 registros por página) diretamente nas queries do Prisma.
@@ -40,11 +48,11 @@ Optei por uma stack amplamente adotada no mercado (Node.js, Express, React e Pos
 
 ## Testes
 
-Priorizei cobrir a pirâmide de testes completa com foco nos fluxos centrais que não podem falhar em produção:
+Cobri a pirâmide completa com foco nos fluxos centrais:
 
-- **Backend (Unitários e Integração):** 28 testes unitários de regras de negócio com repositórios in-memory e 15 testes de integração com banco PostgreSQL real e Supertest.
-- **Frontend (Unitários):** 23 testes cobrindo o formulário de agendamento público com React Testing Library, hooks de animação e roteamento de rotas protegidas (`ProtectedRoute`).
-- **Ponta a Ponta (E2E com Playwright):** 6 testes em navegador Chromium headless cobrindo os fluxos reais de ponta a ponta do paciente e do administrador, rodando na pipeline de CI.
+- **Backend:** 28 unitários (regras de negócio, repositórios in-memory) + 15 de integração (PostgreSQL real, Supertest).
+- **Frontend:** 23 unitários (formulário público, hooks, `ProtectedRoute`).
+- **E2E (Playwright):** 6 testes em Chromium headless cobrindo os fluxos reais de paciente e admin, na pipeline de CI.
 
 ## Melhorias além do mínimo
 
@@ -58,9 +66,9 @@ Priorizei cobrir a pirâmide de testes completa com foco nos fluxos centrais que
 
 **O que foi delegado vs o que foi feito à mão**
 
-Utilizei IA como apoio de produtividade (pair programming): ela ajudou na geração inicial de boilerplate (estruturas repetitivas de rotas Express e schemas Zod), redação dos textos fictícios da clínica para a landing page e rascunho de componentes visuais básicos (cards, badges, skeletons).
+Utilizei IA como apoio de produtividade (pair programming): ela ajudou na geração inicial de boilerplate (estruturas repetitivas de rotas Express e schemas Zod) e no rascunho de componentes visuais básicos (cards, badges, skeletons).
 
-Todas as decisões arquiteturais (Repository Pattern, factories de injeção de dependências, DTOs de saída), modelagem relacional no Prisma, regras de negócio de status, autenticação JWT via cookies `httpOnly` e implementação dos testes foram estruturadas e revisadas manualmente.
+Todas as decisões arquiteturais, a modelagem relacional no Prisma, as regras de negócio de status, a autenticação JWT via cookies `httpOnly` e a implementação dos testes foram estruturadas e revisadas manualmente.
 
 **Onde a IA errou**
 

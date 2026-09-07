@@ -17,7 +17,6 @@ export interface LoginInput {
 
 export interface LoginResponse {
   usuario: Usuario;
-  token?: string;
 }
 
 export const authService = {
